@@ -16,8 +16,6 @@ export default async function Page() {
             active: true,
           },
         ]}
-
-        
       />
       <Form customers={customers} />
     </main>

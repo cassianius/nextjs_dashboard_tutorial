@@ -1,10 +1,7 @@
 import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
 import Search from '@/app/ui/search';
-import {
-  CustomersTableType,
-  FormattedCustomersTable,
-} from '@/app/lib/definitions';
+import { CustomersTableType, FormattedCustomersTable } from '@/app/lib/definitions';
 
 export default async function CustomersTable({
   customers,
@@ -29,7 +26,7 @@ export default async function CustomersTable({
                   >
                     <div className="flex items-center justify-between border-b pb-4">
                       <div>
-                        <div className="mb-2 flex items-center">
+                        {/* <div className="mb-2 flex items-center">
                           <div className="flex items-center gap-3">
                             <Image
                               src={customer.image_url}
@@ -40,7 +37,7 @@ export default async function CustomersTable({
                             />
                             <p>{customer.name}</p>
                           </div>
-                        </div>
+                        </div> */}
                         <p className="text-sm text-gray-500">
                           {customer.email}
                         </p>
@@ -87,7 +84,7 @@ export default async function CustomersTable({
                   {customers.map((customer) => (
                     <tr key={customer.id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
+                        {/* <div className="flex items-center gap-3">
                           <Image
                             src={customer.image_url}
                             className="rounded-full"
@@ -96,7 +93,7 @@ export default async function CustomersTable({
                             height={28}
                           />
                           <p>{customer.name}</p>
-                        </div>
+                        </div> */}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {customer.email}
