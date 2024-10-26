@@ -18,7 +18,7 @@ export default function AcmeLogo() {
 
 
       {/* <GlobeAltIcon className="h-12 w-12 rotate-[15deg]" /> */}
-      <p className="text-[32px] pb-1">convocast</p>
+      <p className="text-[27px] pb-1">convocast</p>
     </div>
   );
 }
