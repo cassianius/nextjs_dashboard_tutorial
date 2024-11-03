@@ -11,8 +11,8 @@ import { usePathname } from 'next/navigation';
 
 const links = [
   // { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  { name: 'Invoices', href: '/dashboard/invoices', icon: DocumentDuplicateIcon,},
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
+  // { name: 'Invoices', href: '/dashboard/invoices', icon: DocumentDuplicateIcon,},
+  { name: 'Participants', href: '/dashboard/participants', icon: UserGroupIcon },
   { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },
 
 ];

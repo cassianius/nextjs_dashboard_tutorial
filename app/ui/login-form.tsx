@@ -39,7 +39,7 @@ export default function LoginForm() {
               <AtSymbolIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
             </div>
           </div>
-          <div className="mt-4">
+           <div className="mt-2">
             <label
               className="mb-3 mt-5 block text-xs font-medium text-gray-900"
               htmlFor="password"

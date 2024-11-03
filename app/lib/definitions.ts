@@ -3,6 +3,13 @@
 // For simplicity of teaching, we're manually defining these types.
 // However, these types are generated automatically if you're using an ORM such as Prisma.
 
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+};
+
 // N/A
 export type Customer = {
   id: string;
@@ -89,13 +96,6 @@ export type InvoiceForm = {
 
 /*CONVOCAST DEFINITIONS*/
 
-export type User = {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-};
-
 export type Participant = {
   id: string;
   first: string;
@@ -125,13 +125,12 @@ export type Interview = {
   invite_code: string;
 };
 
-export type ParticipantsTable = {
+export type FormattedParticipantsTable = {
   id: string;
-  participant_id: string;
-  name: string;
-  image_url: string;
-  date: string;
-  completed_interviews: number;
+  first: string;
+  last: string;
+  email: string;
+  phone: string;
 };
 
 export type InterviewsTable = {
