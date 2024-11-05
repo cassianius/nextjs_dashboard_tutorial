@@ -8,10 +8,17 @@ import {
     DocumentTextIcon,
     QuestionMarkCircleIcon,
     ExclamationCircleIcon,
+    ClockIcon,
+    XCircleIcon,
+    PlusCircleIcon,
+    AcademicCapIcon,
+    ChatBubbleLeftRightIcon,
+    BeakerIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '../button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 type AddInterviewState = {
     error?: string;
@@ -21,62 +28,65 @@ const addInterview = async () => {
     return { error: undefined };
 };
 
-export default function AddInterviewForm() {
+export default function FocusGroupSimulationForm() {
     const [state, action] = useFormState(addInterview, undefined);
     const router = useRouter();
+    const [showOtherIndustry, setShowOtherIndustry] = useState(false);
+
+    const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setShowOtherIndustry(e.target.value === 'other');
+    };
 
     const handleSubmit = async (formData: FormData) => {
-        // const result = await action(formData);
-        // if (!result?.error) {
-        //   router.push('/interviews');
-        // }
+        // Implementation here
     };
+
+    const [questions, setQuestions] = useState<string[]>(['']); // Initialize with one empty question
+    const [outcomes, setOutcomes] = useState<string[]>(['']); // Initialize with one empty outcome
+
+    const addQuestion = () => {
+        setQuestions([...questions, '']);
+    };
+
+    const removeQuestion = (index: number) => {
+        if (questions.length > 1) {
+            const newQuestions = questions.filter((_, i) => i !== index);
+            setQuestions(newQuestions);
+        }
+    };
+
+    const updateQuestion = (index: number, value: string) => {
+        const newQuestions = [...questions];
+        newQuestions[index] = value;
+        setQuestions(newQuestions);
+    };
+
+
+
+
+    const addOutcome = () => {
+        setOutcomes([...outcomes, '']);
+    };
+
+    const removeOutcome = (index: number) => {
+        if (outcomes.length > 1) {
+            const newOutcomes = outcomes.filter((_, i) => i !== index);
+            setOutcomes(newOutcomes);
+        }
+    };
+
+    const updateOutcome = (index: number, value: string) => {
+        const newOutcomes = [...outcomes];
+        newOutcomes[index] = value;
+        setOutcomes(newOutcomes);
+    };
+
 
     return (
         <form action={handleSubmit}>
             <div className="flex-1 rounded-lg bg-gray-900 pb-4 pt-5">
                 <div className="max-w-[600px]">
-                    {/* Basic Information Section */}
-                    <div>
-                        <label
-                            className="mb-3 mt-5 block text-xs font-medium text-white"
-                            htmlFor="subject"
-                        >
-                            Subject
-                        </label>
-                        <div className="relative">
-                            <input
-                                className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
-                                id="subject"
-                                type="text"
-                                name="subject"
-                                placeholder="Interview subject"
-                                required
-                            />
-                            <DocumentTextIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
-                        </div>
-                    </div>
-
-                    {/* Description */}
-                    <div className="mt-4">
-                        <label
-                            className="mb-3 mt-5 block text-xs font-medium text-white"
-                            htmlFor="description"
-                        >
-                            Description
-                        </label>
-                        <div className="relative">
-                            <textarea
-                                className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
-                                id="description"
-                                name="description"
-                                placeholder="Interview description"
-                                rows={3}
-                                required
-                            />
-                            <DocumentTextIcon className="pointer-events-none absolute text-gray-400 left-3 top-[11px] h-[18px] w-[18px] peer-focus:text-white" />
-                        </div>
-                    </div>
+                    {/* ... (previous fields remain the same until industry) ... */}
 
                     {/* Company and Industry */}
                     <div className="grid grid-cols-2 gap-4">
@@ -108,70 +118,104 @@ export default function AddInterviewForm() {
                                 Industry
                             </label>
                             <div className="relative">
-                                <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
+                                <select
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2"
                                     id="industry"
-                                    type="text"
                                     name="industry"
-                                    placeholder="Industry"
+                                    onChange={handleIndustryChange}
                                     required
-                                />
+                                >
+                                    <option value="">Select industry</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="retail">Retail</option>
+                                    <option value="manufacturing">Manufacturing</option>
+                                    <option value="other">Other</option>
+                                </select>
                                 <BuildingOfficeIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                             </div>
                         </div>
                     </div>
 
-                    {/* Group Size and Participant IDs */}
+                    {/* Other Industry Field - Only shows when 'other' is selected */}
+                    {showOtherIndustry && (
+                        <div className="mt-4">
+                            <label
+                                className="mb-3 mt-5 block text-xs font-medium text-white"
+                                htmlFor="other_industry"
+                            >
+                                Specify Industry
+                            </label>
+                            <div className="relative">
+                                <input
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
+                                    id="other_industry"
+                                    type="text"
+                                    name="other_industry"
+                                    placeholder="Please specify your industry"
+                                    required
+                                />
+                                <BuildingOfficeIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Interview Duration and Technical Knowledge Level */}
                     <div className="grid grid-cols-2 gap-4 mt-4">
                         <div>
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
-                                htmlFor="group_size"
+                                htmlFor="duration"
                             >
-                                Group Size
+                                Interview Duration (minutes)
                             </label>
                             <div className="relative">
                                 <input
                                     className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
-                                    id="group_size"
+                                    id="duration"
                                     type="number"
-                                    name="group_size"
-                                    min="1"
-                                    placeholder="Number of participants"
+                                    name="duration"
+                                    min="15"
+                                    max="120"
+                                    step="15"
+                                    placeholder="60"
                                     required
                                 />
-                                <UserGroupIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
+                                <ClockIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                             </div>
                         </div>
 
-                        {/* <div>
+                        <div>
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
-                                htmlFor="participant_ids"
+                                htmlFor="technical_level"
                             >
-                                Participant IDs
+                                Technical Knowledge Level
                             </label>
                             <div className="relative">
-                                <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
-                                    id="participant_ids"
-                                    type="text"
-                                    name="participant_ids"
-                                    placeholder="Comma-separated IDs"
+                                <select
+                                    className="block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2"
+                                    id="technical_level"
+                                    name="technical_level"
                                     required
-                                />
-                                <UserGroupIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
+                                >
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="expert">Expert</option>
+                                </select>
+                                <AcademicCapIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                             </div>
-                        </div> */}
+                        </div>
                     </div>
 
-                    {/* Interview Style and Structure */}
-                    <div className="mt-4">
+                    {/* Interview Style */}
+                    <div className="mt-8">
                         <label className="mb-3 mt-5 block text-xs font-medium text-white">
                             Interviewer Style
                         </label>
                         <div className="flex gap-4">
-                            <label className="flex items-center text-white text-sm ">
+                            <label className="flex items-center text-white text-sm">
                                 <input
                                     type="radio"
                                     name="interviewer_style"
@@ -181,7 +225,7 @@ export default function AddInterviewForm() {
                                 />
                                 Friendly
                             </label>
-                            <label className="flex items-center text-white text-sm ">
+                            <label className="flex items-center text-white text-sm">
                                 <input
                                     type="radio"
                                     name="interviewer_style"
@@ -190,7 +234,7 @@ export default function AddInterviewForm() {
                                 />
                                 Formal
                             </label>
-                            <label className="flex items-center text-white text-sm ">
+                            <label className="flex items-center text-white text-sm">
                                 <input
                                     type="radio"
                                     name="interviewer_style"
@@ -202,19 +246,19 @@ export default function AddInterviewForm() {
                         </div>
                     </div>
 
-                    {/* Response Depth and Conversation Flow */}
+                    {/* Response Depth and Bias Mitigation */}
                     <div className="grid grid-cols-2 gap-4 mt-4">
                         <div>
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
-                                htmlFor="desired_response_depth"
+                                htmlFor="response_depth"
                             >
-                                Desired Response Depth
+                                Response Depth
                             </label>
                             <select
                                 className="block w-full rounded-md text-white border bg-gray-900 py-[9px] px-3 text-sm outline-2"
-                                id="desired_response_depth"
-                                name="desired_response_depth"
+                                id="response_depth"
+                                name="response_depth"
                                 required
                             >
                                 <option value="brief">Brief</option>
@@ -226,61 +270,141 @@ export default function AddInterviewForm() {
                         <div>
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
-                                htmlFor="conversation_flow"
+                                htmlFor="bias_mitigation"
                             >
-                                Conversation Flow
+                                Bias Mitigation Level
                             </label>
                             <select
                                 className="block w-full rounded-md text-white border bg-gray-900 py-[9px] px-3 text-sm outline-2"
-                                id="conversation_flow"
-                                name="conversation_flow"
+                                id="bias_mitigation"
+                                name="bias_mitigation"
                                 required
                             >
-                                <option value="linear">Linear</option>
-                                <option value="tangential">Tangential</option>
+                                <option value="standard">Standard</option>
+                                <option value="enhanced">Enhanced</option>
+                                <option value="strict">Strict</option>
                             </select>
                         </div>
                     </div>
 
-                    {/* Checkboxes */}
+                    {/* Conversation Flow Options */}
                     <div className="mt-4 space-y-2">
                         <label className="flex items-center text-white text-sm">
                             <input
                                 type="checkbox"
-                                name="is_open_ended"
+                                name="allow_tangents"
                                 className="mr-2 bg-gray-300"
-                                />
-                            Open-ended Interview
+                            />
+                            Allow Natural Tangents
                         </label>
                         <label className="flex items-center text-white text-sm">
                             <input
                                 type="checkbox"
-                                name="is_structured"
+                                name="structured_format"
                                 className="mr-2 bg-gray-300"
-                                />
-                            Structured Interview
+                            />
+                            Use Structured Format
                         </label>
                     </div>
 
                     {/* Key Questions */}
                     <div className="mt-4">
-                        <label
-                            className="mb-3 mt-5 block text-xs font-medium text-white"
-                            htmlFor="key_questions"
-                        >
-                            Key Questions
-                        </label>
-                        <div className="relative">
-                            <textarea
-                                className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
-                                id="key_questions"
-                                name="key_questions"
-                                placeholder="Enter key questions (one per line)"
-                                rows={3}
-                                required
-                            />
-                            <QuestionMarkCircleIcon className="pointer-events-none absolute text-gray-400 left-3 top-[11px] h-[18px] w-[18px] peer-focus:text-white" />
+                        <div className="flex justify-between items-center">
+                            <label
+                                className="mb-3 mt-5 block text-xs font-medium text-white"
+                                htmlFor="key_questions"
+                            >
+                                Key Questions
+                            </label>
+                            <button
+                                type="button"
+                                onClick={addQuestion}
+                                className="flex items-center text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                            >
+                                <PlusCircleIcon className="h-4 w-4 mr-1" />
+                                Add Question
+                            </button>
                         </div>
+                        <div className="space-y-2">
+                            {questions.map((question, index) => (
+                                <div key={index} className="relative flex items-center gap-2">
+                                    <div className="flex-grow relative">
+                                        <input
+                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 pr-10 text-sm outline-2 placeholder:text-gray-400"
+                                            type="text"
+                                            value={question}
+                                            onChange={(e) => updateQuestion(index, e.target.value)}
+                                            placeholder={`Question ${index + 1}`}
+                                            required
+                                        />
+                                        <QuestionMarkCircleIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
+                                    </div>
+                                    {questions.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => removeQuestion(index)}
+                                            className="text-gray-400 hover:text-red-400 transition-colors"
+                                            aria-label="Remove question"
+                                        >
+                                            <XCircleIcon className="h-5 w-5" />
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-xs text-gray-400 mt-2">
+                            Add up to 10 key questions for your interview
+                        </p>
+                    </div>
+
+                    {/* Desired Outcomes */}
+                    <div className="mt-4">
+                        <div className="flex justify-between items-center">
+                            <label
+                                className="mb-3 mt-5 block text-xs font-medium text-white"
+                                htmlFor="desired_outcomes"
+                            >
+                                Desired Outcomes
+                            </label>
+                            <button
+                                type="button"
+                                onClick={addOutcome}
+                                className="flex items-center text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                            >
+                                <PlusCircleIcon className="h-4 w-4 mr-1" />
+                                Add Outcome
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {outcomes.map((outcome, index) => (
+                                <div key={index} className="relative flex items-center gap-2">
+                                    <div className="flex-grow relative">
+                                        <input
+                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 pr-10 text-sm outline-2 placeholder:text-gray-400"
+                                            type="text"
+                                            value={outcome}
+                                            onChange={(e) => updateOutcome(index, e.target.value)}
+                                            placeholder={`Outcome ${index + 1}`}
+                                            required
+                                        />
+                                        <QuestionMarkCircleIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
+                                    </div>
+                                    {outcomes.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => removeOutcome(index)}
+                                            className="text-gray-400 hover:text-red-400 transition-colors"
+                                            aria-label="Remove outcome"
+                                        >
+                                            <XCircleIcon className="h-5 w-5" />
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-xs text-gray-400 mt-2">
+                            Add up to 10 key outcomes for your interview
+                        </p>
                     </div>
 
                     <SaveButton />

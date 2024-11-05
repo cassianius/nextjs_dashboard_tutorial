@@ -4,6 +4,8 @@ import {
   HomeIcon,
   DocumentDuplicateIcon,
   UserCircleIcon,
+  CogIcon,
+  QuestionMarkCircleIcon,
   ClipboardIcon
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
@@ -16,7 +18,8 @@ const links = [
   { name: 'Participants', href: '/dashboard/participants', icon: UserGroupIcon },
   { name: 'Interviews', href: '/dashboard/interviews', icon: ClipboardIcon },
   { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },
-
+  { name: 'Settings', href: '/dashboard/settings', icon: CogIcon },
+  { name: 'Help', href: '/dashboard/help', icon: QuestionMarkCircleIcon },
 ];
 
 export default function NavLinks() {
