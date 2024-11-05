@@ -111,15 +111,15 @@ export type Interview = {
   subject: string;
   description: string;
   group_size: number;
-  participant_ids: [string];
+  participant_ids: string[];
   is_open_ended: boolean;
   company: string;
   industry: string;
-  key_questions: [string];
+  key_questions: string[];
   status: 'draft' | 'published'
   interviewer_style: 'friendly' | 'formal' | 'probing';
   is_structured: boolean;
-  scenario_setting: 'string'
+  scenario_setting: string;
   desired_response_depth: 'brief' | 'moderate' | 'in_depth';
   conversation_flow: 'linear' | 'tangential';
   invite_code: string;
@@ -153,6 +153,7 @@ export type ParticipantForm = {
 
 export type InterviewForm = {
   id: string; 
+  date: string;
   subject: string;
   description: string;
   group_size: number;
@@ -161,7 +162,27 @@ export type InterviewForm = {
   company: string;
   industry: string;
   key_questions: [string];
-  status: 'draft' | 'published'
+  status: 'draft' | 'published' | 'inactive'
+  interviewer_style: 'friendly' | 'formal' | 'probing';
+  is_structured: boolean;
+  scenario_setting: 'string'
+  desired_response_depth: 'brief' | 'moderate' | 'in_depth';
+  conversation_flow: 'linear' | 'tangential';
+  invite_code: string;
+};
+
+export type FormattedInterviewsTable = {
+  id: string; 
+  date: string;
+  subject: string;
+  description: string;
+  group_size: number;
+  participant_ids: [string];
+  is_open_ended: boolean;
+  company: string;
+  industry: string;
+  key_questions: [string];
+  status: 'draft' | 'published' | 'inactive'
   interviewer_style: 'friendly' | 'formal' | 'probing';
   is_structured: boolean;
   scenario_setting: 'string'
