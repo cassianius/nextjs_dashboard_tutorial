@@ -6,19 +6,19 @@ import {
   UserCircleIcon,
   CogIcon,
   QuestionMarkCircleIcon,
-  ClipboardIcon
+  ClipboardIcon,
+  ClipboardDocumentIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const links = [
-  // { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  // { name: 'Invoices', href: '/dashboard/invoices', icon: DocumentDuplicateIcon,},
+  { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
+  { name: 'Interviews', href: '/dashboard/interviews', icon: ClipboardDocumentIcon },
   { name: 'Participants', href: '/dashboard/participants', icon: UserGroupIcon },
-  { name: 'Interviews', href: '/dashboard/interviews', icon: ClipboardIcon },
   { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },
-  { name: 'Settings', href: '/dashboard/settings', icon: CogIcon },
   { name: 'Help', href: '/dashboard/help', icon: QuestionMarkCircleIcon },
 ];
 

@@ -99,14 +99,13 @@ export default function FocusGroupSimulationForm() {
                             </label>
                             <div className="relative">
                                 <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2 placeholder:text-gray-400"
                                     id="company"
                                     type="text"
                                     name="company"
                                     placeholder="Company name"
                                     required
                                 />
-                                <BuildingOfficeIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                             </div>
                         </div>
 
@@ -119,7 +118,7 @@ export default function FocusGroupSimulationForm() {
                             </label>
                             <div className="relative">
                                 <select
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2"
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2"
                                     id="industry"
                                     name="industry"
                                     onChange={handleIndustryChange}
@@ -133,7 +132,6 @@ export default function FocusGroupSimulationForm() {
                                     <option value="manufacturing">Manufacturing</option>
                                     <option value="other">Other</option>
                                 </select>
-                                <BuildingOfficeIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                             </div>
                         </div>
                     </div>
@@ -149,14 +147,13 @@ export default function FocusGroupSimulationForm() {
                             </label>
                             <div className="relative">
                                 <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2 placeholder:text-gray-400"
                                     id="other_industry"
                                     type="text"
                                     name="other_industry"
                                     placeholder="Please specify your industry"
                                     required
                                 />
-                                <BuildingOfficeIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                             </div>
                         </div>
                     )}
@@ -172,7 +169,7 @@ export default function FocusGroupSimulationForm() {
                             </label>
                             <div className="relative">
                                 <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-400"
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2 placeholder:text-gray-400"
                                     id="duration"
                                     type="number"
                                     name="duration"
@@ -182,7 +179,6 @@ export default function FocusGroupSimulationForm() {
                                     placeholder="60"
                                     required
                                 />
-                                <ClockIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                             </div>
                         </div>
 
@@ -191,58 +187,20 @@ export default function FocusGroupSimulationForm() {
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
                                 htmlFor="technical_level"
                             >
-                                Technical Knowledge Level
+                                Interview Style
                             </label>
                             <div className="relative">
                                 <select
-                                    className="block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 text-sm outline-2"
-                                    id="technical_level"
-                                    name="technical_level"
+                                    className="block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2"
+                                    id="interview_style"
+                                    name="interview_style"
                                     required
                                 >
-                                    <option value="beginner">Beginner</option>
-                                    <option value="intermediate">Intermediate</option>
-                                    <option value="expert">Expert</option>
+                                    <option value="friendly">Friendly</option>
+                                    <option value="formal">Formal</option>
+                                    <option value="probing">Probing</option>
                                 </select>
-                                <AcademicCapIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Interview Style */}
-                    <div className="mt-8">
-                        <label className="mb-3 mt-5 block text-xs font-medium text-white">
-                            Interviewer Style
-                        </label>
-                        <div className="flex gap-4">
-                            <label className="flex items-center text-white text-sm">
-                                <input
-                                    type="radio"
-                                    name="interviewer_style"
-                                    value="friendly"
-                                    className="mr-2 bg-gray-300"
-                                    required
-                                />
-                                Friendly
-                            </label>
-                            <label className="flex items-center text-white text-sm">
-                                <input
-                                    type="radio"
-                                    name="interviewer_style"
-                                    value="formal"
-                                    className="mr-2 bg-gray-300"
-                                />
-                                Formal
-                            </label>
-                            <label className="flex items-center text-white text-sm">
-                                <input
-                                    type="radio"
-                                    name="interviewer_style"
-                                    value="probing"
-                                    className="mr-2 bg-gray-300"
-                                />
-                                Probing
-                            </label>
                         </div>
                     </div>
 
@@ -287,26 +245,6 @@ export default function FocusGroupSimulationForm() {
                         </div>
                     </div>
 
-                    {/* Conversation Flow Options */}
-                    <div className="mt-4 space-y-2">
-                        <label className="flex items-center text-white text-sm">
-                            <input
-                                type="checkbox"
-                                name="allow_tangents"
-                                className="mr-2 bg-gray-300"
-                            />
-                            Allow Natural Tangents
-                        </label>
-                        <label className="flex items-center text-white text-sm">
-                            <input
-                                type="checkbox"
-                                name="structured_format"
-                                className="mr-2 bg-gray-300"
-                            />
-                            Use Structured Format
-                        </label>
-                    </div>
-
                     {/* Key Questions */}
                     <div className="mt-4">
                         <div className="flex justify-between items-center">
@@ -330,14 +268,13 @@ export default function FocusGroupSimulationForm() {
                                 <div key={index} className="relative flex items-center gap-2">
                                     <div className="flex-grow relative">
                                         <input
-                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 pr-10 text-sm outline-2 placeholder:text-gray-400"
+                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  pr-10 text-sm outline-2 placeholder:text-gray-400"
                                             type="text"
                                             value={question}
                                             onChange={(e) => updateQuestion(index, e.target.value)}
                                             placeholder={`Question ${index + 1}`}
                                             required
                                         />
-                                        <QuestionMarkCircleIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                                     </div>
                                     {questions.length > 1 && (
                                         <button
@@ -358,7 +295,7 @@ export default function FocusGroupSimulationForm() {
                     </div>
 
                     {/* Desired Outcomes */}
-                    <div className="mt-4">
+                    <div className="mt-1">
                         <div className="flex justify-between items-center">
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
@@ -380,14 +317,13 @@ export default function FocusGroupSimulationForm() {
                                 <div key={index} className="relative flex items-center gap-2">
                                     <div className="flex-grow relative">
                                         <input
-                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pl-10 pr-10 text-sm outline-2 placeholder:text-gray-400"
+                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  pr-10 text-sm outline-2 placeholder:text-gray-400"
                                             type="text"
                                             value={outcome}
                                             onChange={(e) => updateOutcome(index, e.target.value)}
                                             placeholder={`Outcome ${index + 1}`}
                                             required
                                         />
-                                        <QuestionMarkCircleIcon className="pointer-events-none absolute text-gray-400 left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 peer-focus:text-white" />
                                     </div>
                                     {outcomes.length > 1 && (
                                         <button
@@ -405,6 +341,18 @@ export default function FocusGroupSimulationForm() {
                         <p className="text-xs text-gray-400 mt-2">
                             Add up to 10 key outcomes for your interview
                         </p>
+                    </div>
+
+                           {/* Conversation Flow Options */}
+                           <div className="mt-6 space-y-2">
+                        <label className="flex items-center text-white text-sm">
+                            <input
+                                type="checkbox"
+                                name="allow_tangents"
+                                className="mr-2 bg-gray-300"
+                            />
+                            Allow for natural tangents and side discussions
+                        </label>
                     </div>
 
                     <SaveButton />
