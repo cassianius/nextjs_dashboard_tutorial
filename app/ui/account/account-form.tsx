@@ -42,7 +42,7 @@ export default function AccountForm() {
                     {/* First Name */}
                     <div>
                         <label
-                            className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+                            className="mb-3 mt-5 block text-xs font-medium text-white"
                             htmlFor="name"
                         >
                             First Name
@@ -63,7 +63,7 @@ export default function AccountForm() {
                     {/* Last Name */}
                     <div>
                         <label
-                            className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+                            className="mb-3 mt-5 block text-xs font-medium text-white"
                             htmlFor="name"
                         >
                             Last Name
@@ -84,7 +84,7 @@ export default function AccountForm() {
                     {/* Email Field */}
                     <div className="mt-4">
                         <label
-                            className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+                            className="mb-3 mt-5 block text-xs font-medium text-white"
                             htmlFor="email"
                         >
                             Email
@@ -104,7 +104,7 @@ export default function AccountForm() {
 
                     <div className="mt-4">
                         <label
-                            className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+                            className="mb-3 mt-5 block text-xs font-medium text-white"
                             htmlFor="phone"
                         >
                             Phone Number

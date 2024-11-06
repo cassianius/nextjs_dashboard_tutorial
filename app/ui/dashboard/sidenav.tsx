@@ -7,8 +7,8 @@ import { signOut } from '@/auth';
 export default function SideNav() {
   return (
     <div className="bg-gray-800 flex h-full flex-col px-3 py-4 md:px-2">
-      <div className="mb-4">
-        <AcmeLogo />
+      <div className="mb-7">
+        <AcmeLogo/>
       </div>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
