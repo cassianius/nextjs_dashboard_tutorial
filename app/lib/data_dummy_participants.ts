@@ -104,3 +104,6 @@ export async function fetchParticipants(query: string, currentPage: number) {
   }
   
   export default fetchParticipants;
+
+
+  

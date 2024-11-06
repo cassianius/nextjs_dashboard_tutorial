@@ -2,23 +2,16 @@
 
 import { lusitana } from '@/app/ui/fonts';
 import {
-    CalendarIcon,
-    UserGroupIcon,
-    BuildingOfficeIcon,
-    DocumentTextIcon,
-    QuestionMarkCircleIcon,
     ExclamationCircleIcon,
     ClockIcon,
     XCircleIcon,
     PlusCircleIcon,
-    AcademicCapIcon,
-    ChatBubbleLeftRightIcon,
-    BeakerIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '../button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Participant } from '@/app/lib/definitions';
 
 type AddInterviewState = {
     error?: string;
@@ -32,6 +25,43 @@ export default function FocusGroupSimulationForm() {
     const [state, action] = useFormState(addInterview, undefined);
     const router = useRouter();
     const [showOtherIndustry, setShowOtherIndustry] = useState(false);
+    const [selectedParticipants, setSelectedParticipants] = useState<Participant[]>([]);
+    const [participantEmail, setParticipantEmail] = useState('');
+    const [participantError, setParticipantError] = useState('');
+    const [questions, setQuestions] = useState<string[]>(['']); 
+    const [outcomes, setOutcomes] = useState<string[]>(['']); 
+
+    const handleAddParticipant = async () => {
+        setParticipantError('');
+        if (!participantEmail) {
+            setParticipantError('Please enter an email address');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/participants/search?email=${encodeURIComponent(participantEmail)}`);
+            const participant = await response.json();
+
+            if (!participant) {
+                setParticipantError('Participant not found');
+                return;
+            }
+
+            if (selectedParticipants.some(p => p.id === participant.id)) {
+                setParticipantError('Participant already added');
+                return;
+            }
+
+            setSelectedParticipants([...selectedParticipants, participant]);
+            setParticipantEmail('');
+        } catch (error) {
+            setParticipantError('Error finding participant');
+        }
+    };
+
+    const removeParticipant = (participantId: string) => {
+        setSelectedParticipants(selectedParticipants.filter(p => p.id !== participantId));
+    };
 
     const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setShowOtherIndustry(e.target.value === 'other');
@@ -41,11 +71,10 @@ export default function FocusGroupSimulationForm() {
         // Implementation here
     };
 
-    const [questions, setQuestions] = useState<string[]>(['']); // Initialize with one empty question
-    const [outcomes, setOutcomes] = useState<string[]>(['']); // Initialize with one empty outcome
-
     const addQuestion = () => {
-        setQuestions([...questions, '']);
+        if (questions.length < 10) {
+            setQuestions([...questions, '']);
+        }
     };
 
     const removeQuestion = (index: number) => {
@@ -61,11 +90,10 @@ export default function FocusGroupSimulationForm() {
         setQuestions(newQuestions);
     };
 
-
-
-
     const addOutcome = () => {
-        setOutcomes([...outcomes, '']);
+        if (outcomes.length < 10) {
+            setOutcomes([...outcomes, '']);
+        }
     };
 
     const removeOutcome = (index: number) => {
@@ -81,13 +109,10 @@ export default function FocusGroupSimulationForm() {
         setOutcomes(newOutcomes);
     };
 
-
     return (
         <form action={handleSubmit}>
             <div className="flex-1 rounded-lg bg-gray-900 pb-4 pt-5">
                 <div className="max-w-[600px]">
-                    {/* ... (previous fields remain the same until industry) ... */}
-
                     {/* Company and Industry */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -99,7 +124,7 @@ export default function FocusGroupSimulationForm() {
                             </label>
                             <div className="relative">
                                 <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2 placeholder:text-gray-400"
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
                                     id="company"
                                     type="text"
                                     name="company"
@@ -118,7 +143,7 @@ export default function FocusGroupSimulationForm() {
                             </label>
                             <div className="relative">
                                 <select
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2"
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2"
                                     id="industry"
                                     name="industry"
                                     onChange={handleIndustryChange}
@@ -136,7 +161,7 @@ export default function FocusGroupSimulationForm() {
                         </div>
                     </div>
 
-                    {/* Other Industry Field - Only shows when 'other' is selected */}
+                    {/* Other Industry Field */}
                     {showOtherIndustry && (
                         <div className="mt-4">
                             <label
@@ -147,7 +172,7 @@ export default function FocusGroupSimulationForm() {
                             </label>
                             <div className="relative">
                                 <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2 placeholder:text-gray-400"
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
                                     id="other_industry"
                                     type="text"
                                     name="other_industry"
@@ -158,7 +183,7 @@ export default function FocusGroupSimulationForm() {
                         </div>
                     )}
 
-                    {/* Interview Duration and Technical Knowledge Level */}
+                    {/* Interview Duration and Style */}
                     <div className="grid grid-cols-2 gap-4 mt-4">
                         <div>
                             <label
@@ -169,7 +194,7 @@ export default function FocusGroupSimulationForm() {
                             </label>
                             <div className="relative">
                                 <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2 placeholder:text-gray-400"
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
                                     id="duration"
                                     type="number"
                                     name="duration"
@@ -185,13 +210,13 @@ export default function FocusGroupSimulationForm() {
                         <div>
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
-                                htmlFor="technical_level"
+                                htmlFor="interview_style"
                             >
                                 Interview Style
                             </label>
                             <div className="relative">
                                 <select
-                                    className="block w-full rounded-md text-white border bg-gray-900 py-[9px]  text-sm outline-2"
+                                    className="block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2"
                                     id="interview_style"
                                     name="interview_style"
                                     required
@@ -268,7 +293,7 @@ export default function FocusGroupSimulationForm() {
                                 <div key={index} className="relative flex items-center gap-2">
                                     <div className="flex-grow relative">
                                         <input
-                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  pr-10 text-sm outline-2 placeholder:text-gray-400"
+                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pr-10 text-sm outline-2 placeholder:text-gray-400"
                                             type="text"
                                             value={question}
                                             onChange={(e) => updateQuestion(index, e.target.value)}
@@ -317,7 +342,7 @@ export default function FocusGroupSimulationForm() {
                                 <div key={index} className="relative flex items-center gap-2">
                                     <div className="flex-grow relative">
                                         <input
-                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px]  pr-10 text-sm outline-2 placeholder:text-gray-400"
+                                            className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] pr-10 text-sm outline-2 placeholder:text-gray-400"
                                             type="text"
                                             value={outcome}
                                             onChange={(e) => updateOutcome(index, e.target.value)}
@@ -343,8 +368,8 @@ export default function FocusGroupSimulationForm() {
                         </p>
                     </div>
 
-                           {/* Conversation Flow Options */}
-                           <div className="mt-6 space-y-2">
+                    {/* Conversation Flow Options */}
+                    <div className="mt-6 space-y-2">
                         <label className="flex items-center text-white text-sm">
                             <input
                                 type="checkbox"
@@ -353,6 +378,82 @@ export default function FocusGroupSimulationForm() {
                             />
                             Allow for natural tangents and side discussions
                         </label>
+                    </div>
+
+                    {/* Participant Selection */}
+                    <div className="mt-8">
+                        <div className="flex justify-between items-center">
+                            <label
+                                className="mb-3 block text-xs font-medium text-white"
+                                htmlFor="participant_email"
+                            >
+                                Participants
+                            </label>
+                        </div>
+
+                        {/* Add Participant Input */}
+                        <div className="flex gap-2">
+                            <div className="flex-grow relative">
+                                <input
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
+                                    type="email"
+                                    id="participant_email"
+                                    value={participantEmail}
+                                        onChange={(e) => setParticipantEmail(e.target.value)}
+                                    placeholder="Enter participant email"
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleAddParticipant}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-500 transition-colors flex items-center gap-1"
+                            >
+                                <PlusCircleIcon className="h-4 w-4" />
+                                Add
+                            </button>
+                        </div>
+
+                        {participantError && (
+                            <p className="text-sm text-red-500 mt-1">{participantError}</p>
+                        )}
+
+                        {/* Selected Participants List */}
+                        <div className="mt-4 space-y-2">
+                            {selectedParticipants.map((participant) => (
+                                <div
+                                    key={participant.id}
+                                    className="flex items-center justify-between p-3 rounded-md bg-gray-800 border border-gray-700"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
+                                            <span className="text-sm text-white">
+                                                {participant.first[0]}{participant.last[0]}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-white">
+                                                {participant.first} {participant.last}
+                                            </p>
+                                            <p className="text-xs text-gray-400">{participant.email}</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeParticipant(participant.id)}
+                                        className="text-gray-400 hover:text-red-400 transition-colors"
+                                        aria-label="Remove participant"
+                                    >
+                                        <XCircleIcon className="h-5 w-5" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+
+                        {selectedParticipants.length > 0 && (
+                            <p className="text-xs text-gray-400 mt-2">
+                                {selectedParticipants.length} participant{selectedParticipants.length !== 1 ? 's' : ''} added
+                            </p>
+                        )}
                     </div>
 
                     <SaveButton />
@@ -380,3 +481,6 @@ function SaveButton() {
         </Button>
     );
 }
+
+
+//Dummy data
