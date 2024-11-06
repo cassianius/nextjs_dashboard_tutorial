@@ -1,8 +1,12 @@
 'use client';
 import {
   UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
   UserCircleIcon,
+  CogIcon,
   QuestionMarkCircleIcon,
+  ClipboardIcon,
   ClipboardDocumentIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline';
@@ -15,7 +19,7 @@ const links = [
   { name: 'Interviews', href: '/dashboard/interviews', icon: ClipboardDocumentIcon },
   { name: 'Participants', href: '/dashboard/participants', icon: UserGroupIcon },
   { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },
-  { name: 'Help', href: '/dashboard/help', icon: QuestionMarkCircleIcon },
+  // { name: 'Help', href: '/dashboard/help', icon: QuestionMarkCircleIcon },
 ];
 
 export default function NavLinks() {

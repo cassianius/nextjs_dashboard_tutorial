@@ -6,7 +6,6 @@ import {
     PhoneIcon,
     ExclamationCircleIcon,
     UserIcon,
-    PlusCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '../button'
@@ -18,43 +17,28 @@ type AddParticipantState = {
 } | undefined;
 
 // Temporary simplified version that just allows navigation
-const addParticipant = async () => {
+const saveAccount = async () => {
     return { error: undefined };
 };
 
-export default function AddParticipantForm() {
-    const [state, action] = useFormState(addParticipant, undefined);
+export default function AccountForm() {
+    const [state, action] = useFormState(saveAccount, undefined);
     const router = useRouter();
 
     // Handle form submission
     const handleSubmit = async (formData: FormData) => {
-        // Get the files
-        const fileInput = document.querySelector('#profile-upload') as HTMLInputElement;
-        const files = fileInput?.files;
-        
-        if (files && files.length > 0) {
-          // Append each file to the FormData
-          for (let i = 0; i < files.length; i++) {
-            formData.append('documents', files[i]);
-          }
-        }
-        
-        // Rest of your form submission logic
         // const result = await action(formData);
         // if (!result?.error) {
         //   router.push('signup/companyProfile');
         // }
-      };
+    };
 
     return (
         <form action={handleSubmit}>
+            <h1 className={`${lusitana.className} text-2xl text-white`}>My account</h1>
+
             <div className="flex-1 rounded-lg bg-gray-900 pb-4 pt-5">
                 <div className="max-w-[400px]">
-
-
-
-
-
                     {/* First Name */}
                     <div>
                         <label
@@ -97,7 +81,6 @@ export default function AddParticipantForm() {
                         </div>
                     </div>
 
-
                     {/* Email Field */}
                     <div className="mt-4">
                         <label
@@ -139,7 +122,7 @@ export default function AddParticipantForm() {
                         </div>
                     </div>
 
-                    <SignUpButton />
+                    {/* <SignUpButton />
                     <div className="flex h-8 items-end space-x-1">
                         {state?.error && (
                             <>
@@ -149,49 +132,19 @@ export default function AddParticipantForm() {
                                 </p>
                             </>
                         )}
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </form>
     );
 }
 
-function SignUpButton() {
-  const { pending } = useFormStatus();
-  return (
-    <div className="mt-8 space-y-4">
-      <div className="flex flex-col">
-        <label
-          className="mb-3 block text-xs font-medium text-white"
-          htmlFor="profile-upload"
-        >
-          Upload Profile Documents
-        </label>
-        <div className="relative">
-          <input
-            type="file"
-            id="profile-upload"
-            name="profile-upload"
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.csv"
-            className="hidden"
-            multiple
-          />
-          <label
-            htmlFor="profile-upload"
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-md border border-gray-400 bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800 hover:border-gray-300"
-          >
-            <PlusCircleIcon className="h-5 w-5" />
-            Upload profile documents for this user
-          </label>
-          <p className="mt-2 text-xs text-gray-400">
-            Accepted formats: PDF, DOC, XLS, CSV
-          </p>
-        </div>
-      </div>
-      
-      <Button className="w-[70px] justify-center items-center" aria-disabled={pending}>
-        Save 
-      </Button>
-    </div>
-  );
-}
+// function SignUpButton() {
+//     const { pending } = useFormStatus();
+//     return (
+//         <Button className="mt-12 w-[70px] justify-center items-center" aria-disabled={pending}>
+//             Save 
+//             {/* <PlusCircleIcon className="ml-auto h-5 w-5 text-gray-50" /> */}
+//         </Button>
+//     );
+// }

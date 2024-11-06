@@ -28,23 +28,11 @@ export default function AddParticipantForm() {
 
     // Handle form submission
     const handleSubmit = async (formData: FormData) => {
-        // Get the files
-        const fileInput = document.querySelector('#profile-upload') as HTMLInputElement;
-        const files = fileInput?.files;
-        
-        if (files && files.length > 0) {
-          // Append each file to the FormData
-          for (let i = 0; i < files.length; i++) {
-            formData.append('documents', files[i]);
-          }
-        }
-        
-        // Rest of your form submission logic
         // const result = await action(formData);
         // if (!result?.error) {
         //   router.push('signup/companyProfile');
         // }
-      };
+    };
 
     return (
         <form action={handleSubmit}>
@@ -58,7 +46,7 @@ export default function AddParticipantForm() {
                     {/* First Name */}
                     <div>
                         <label
-                            className="mb-3 mt-5 block text-xs font-medium text-white"
+                            className="mb-3 mt-5 block text-xs font-medium text-gray-900"
                             htmlFor="name"
                         >
                             First Name
@@ -79,7 +67,7 @@ export default function AddParticipantForm() {
                     {/* Last Name */}
                     <div>
                         <label
-                            className="mb-3 mt-5 block text-xs font-medium text-white"
+                            className="mb-3 mt-5 block text-xs font-medium text-gray-900"
                             htmlFor="name"
                         >
                             Last Name
@@ -101,7 +89,7 @@ export default function AddParticipantForm() {
                     {/* Email Field */}
                     <div className="mt-4">
                         <label
-                            className="mb-3 mt-5 block text-xs font-medium text-white"
+                            className="mb-3 mt-5 block text-xs font-medium text-gray-900"
                             htmlFor="email"
                         >
                             Email
@@ -119,9 +107,10 @@ export default function AddParticipantForm() {
                         </div>
                     </div>
 
+
                     <div className="mt-4">
                         <label
-                            className="mb-3 mt-5 block text-xs font-medium text-white"
+                            className="mb-3 mt-5 block text-xs font-medium text-gray-900"
                             htmlFor="phone"
                         >
                             Phone Number
@@ -157,41 +146,11 @@ export default function AddParticipantForm() {
 }
 
 function SignUpButton() {
-  const { pending } = useFormStatus();
-  return (
-    <div className="mt-8 space-y-4">
-      <div className="flex flex-col">
-        <label
-          className="mb-3 block text-xs font-medium text-white"
-          htmlFor="profile-upload"
-        >
-          Upload Profile Documents
-        </label>
-        <div className="relative">
-          <input
-            type="file"
-            id="profile-upload"
-            name="profile-upload"
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.csv"
-            className="hidden"
-            multiple
-          />
-          <label
-            htmlFor="profile-upload"
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-md border border-gray-400 bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800 hover:border-gray-300"
-          >
-            <PlusCircleIcon className="h-5 w-5" />
-            Upload profile documents for this user
-          </label>
-          <p className="mt-2 text-xs text-gray-400">
-            Accepted formats: PDF, DOC, XLS, CSV
-          </p>
-        </div>
-      </div>
-      
-      <Button className="w-[70px] justify-center items-center" aria-disabled={pending}>
-        Save 
-      </Button>
-    </div>
-  );
+    const { pending } = useFormStatus();
+    return (
+        <Button className="mt-12 w-[70px] justify-center items-center" aria-disabled={pending}>
+            Save 
+            {/* <PlusCircleIcon className="ml-auto h-5 w-5 text-gray-50" /> */}
+        </Button>
+    );
 }
