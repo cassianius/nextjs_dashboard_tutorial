@@ -1,13 +1,6 @@
-import { fetchParticipants } from '@/app/lib/data_dummy_participants';
+import { FormattedParticipantsTable } from '@/app/lib/definitions';
+import { fetchParticipants } from '@/app/lib/actions';
 import Link from 'next/link';
-
-type FormattedParticipantsTable = {
-  id: string;
-  first: string;
-  last: string;
-  email: string;
-  phone: string;
-};
 
 export default async function ParticipantsTable({
   query,

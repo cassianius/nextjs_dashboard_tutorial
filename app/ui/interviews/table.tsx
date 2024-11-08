@@ -1,6 +1,6 @@
-import { fetchInterviews } from '@/app/lib/data_dummy_interviews';
 import Link from 'next/link';
 import { FormattedInterviewsTable } from '@/app/lib/definitions';
+import { fetchInterviews, fetchInterviewPages } from '@/app/lib/actions';
 
 export default async function InterviewsTable({
   query,
@@ -10,7 +10,6 @@ export default async function InterviewsTable({
   currentPage: number;
 }) {
   const interviews = await fetchInterviews(query, currentPage) as FormattedInterviewsTable[];
-
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
       case 'published':
@@ -43,7 +42,7 @@ export default async function InterviewsTable({
           >
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <h3 className="text-white font-medium">{interview.subject}</h3>
+                <h3 className="text-white font-medium">{interview.topic}</h3>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClass(interview.status)}`}>
                   {formatStatus(interview.status)}
                 </span>
@@ -106,7 +105,7 @@ export default async function InterviewsTable({
             {interviews?.map((interview) => (
               <tr key={interview.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                  {interview.subject}
+                  {interview.topic}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                   {interview.date}

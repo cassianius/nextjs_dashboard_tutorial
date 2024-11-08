@@ -35,8 +35,6 @@ export default function AccountForm() {
 
     return (
         <form action={handleSubmit}>
-            <h1 className={`${lusitana.className} text-2xl text-white`}>My account</h1>
-
             <div className="flex-1 rounded-lg bg-gray-900 pb-4 pt-5">
                 <div className="max-w-[400px]">
                     {/* First Name */}

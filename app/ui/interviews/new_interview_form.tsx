@@ -3,9 +3,10 @@
 import { lusitana } from '@/app/ui/fonts';
 import {
     ExclamationCircleIcon,
-    ClockIcon,
     XCircleIcon,
     PlusCircleIcon,
+    RocketLaunchIcon,
+    DocumentIcon
 } from '@heroicons/react/24/outline';
 import { Button } from '../button';
 import { useFormState, useFormStatus } from 'react-dom';
@@ -21,6 +22,34 @@ const addInterview = async () => {
     return { error: undefined };
 };
 
+function SaveButtons() {
+    const { pending } = useFormStatus();
+    
+    return (
+        <div className="mt-12 flex gap-4">
+            <Button
+                className="flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-500"
+                aria-disabled={pending}
+                name="action"
+                value="draft"
+            >
+                <DocumentIcon className="h-4 w-4" />
+                Save as Draft
+            </Button>
+            
+            <Button
+                className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500"
+                aria-disabled={pending}
+                name="action"
+                value="publish"
+            >
+                <RocketLaunchIcon className="h-4 w-4" />
+                Publish
+            </Button>
+        </div>
+    );
+}
+
 export default function FocusGroupSimulationForm() {
     const [state, action] = useFormState(addInterview, undefined);
     const router = useRouter();
@@ -28,8 +57,8 @@ export default function FocusGroupSimulationForm() {
     const [selectedParticipants, setSelectedParticipants] = useState<Participant[]>([]);
     const [participantEmail, setParticipantEmail] = useState('');
     const [participantError, setParticipantError] = useState('');
-    const [questions, setQuestions] = useState<string[]>(['']); 
-    const [outcomes, setOutcomes] = useState<string[]>(['']); 
+    const [questions, setQuestions] = useState<string[]>(['']);
+    const [outcomes, setOutcomes] = useState<string[]>(['']);
 
     const handleAddParticipant = async () => {
         setParticipantError('');
@@ -69,6 +98,12 @@ export default function FocusGroupSimulationForm() {
 
     const handleSubmit = async (formData: FormData) => {
         // Implementation here
+        const action = formData.get('action');
+        
+        // Implementation here - you can use the action value
+        // to determine whether to save as draft or publish
+        console.log('Form action:', action);
+    
     };
 
     const addQuestion = () => {
@@ -113,6 +148,26 @@ export default function FocusGroupSimulationForm() {
         <form action={handleSubmit}>
             <div className="flex-1 rounded-lg bg-gray-900 pb-4 pt-5">
                 <div className="max-w-[600px]">
+                    {/* Topic Field */}
+                    <div className="mb-4">
+                        <label
+                            className="mb-3 mt-5 block text-xs font-medium text-white"
+                            htmlFor="topic"
+                        >
+                            Topic
+                        </label>
+                        <div className="relative">
+                            <input
+                                className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
+                                id="topic"
+                                type="text"
+                                name="topic"
+                                placeholder="Interview topic"
+                                required
+                            />
+                        </div>
+                    </div>
+
                     {/* Company and Industry */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -183,8 +238,7 @@ export default function FocusGroupSimulationForm() {
                         </div>
                     )}
 
-                    {/* Interview Duration and Style */}
-                    <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="grid grid-cols-3 gap-4 mt-4">
                         <div>
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
@@ -202,6 +256,27 @@ export default function FocusGroupSimulationForm() {
                                     max="120"
                                     step="15"
                                     placeholder="60"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                className="mb-3 mt-5 block text-xs font-medium text-white"
+                                htmlFor="max_participants"
+                            >
+                                Max Participants
+                            </label>
+                            <div className="relative">
+                                <input
+                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
+                                    id="max_participants"
+                                    type="number"
+                                    name="max_participants"
+                                    min="1"
+                                    max="10"
+                                    placeholder="5"
                                     required
                                 />
                             </div>
@@ -399,7 +474,7 @@ export default function FocusGroupSimulationForm() {
                                     type="email"
                                     id="participant_email"
                                     value={participantEmail}
-                                        onChange={(e) => setParticipantEmail(e.target.value)}
+                                    onChange={(e) => setParticipantEmail(e.target.value)}
                                     placeholder="Enter participant email"
                                 />
                             </div>
@@ -456,7 +531,7 @@ export default function FocusGroupSimulationForm() {
                         )}
                     </div>
 
-                    <SaveButton />
+                    <SaveButtons />
                     <div className="flex h-8 items-end space-x-1">
                         {state?.error && (
                             <>

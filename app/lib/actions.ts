@@ -1,36 +1,47 @@
-"use server";
-
-import { sql } from "@vercel/postgres";
-import { z } from "zod";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+// app/actions.ts
+'use server'
+import { sql } from '@vercel/postgres';
+import { getCompanyId } from '@/auth';
+import { FormattedInterviewsTable, FormattedParticipantsTable } from '@/app/lib/definitions';
 import { signIn } from '@/auth';
 
-export type State = {
-  errors?: {
-    customerId?: string[];
-    amount?: string[];
-    status?: string[];
-  };
-  message?: string | null;
-};
+const ITEMS_PER_PAGE = 10;
 
-const InvoiceSchema = z.object({
-  id: z.string(),
-  customerId: z.string({
-    invalid_type_error: 'Please select a customer.',
-  }),
-  amount: z.coerce
-    .number()
-    .gt(0, { message: 'Please enter an amount greater than $0.' }),
-  status: z.enum(['pending', 'paid'], {
-    invalid_type_error: 'Please select an invoice status.',
-  }),
-  date: z.string(),
-});
+// Fetch interviews
+export async function fetchInterviews(
+  query: string = '',
+  currentPage: number = 1,
+): Promise<FormattedInterviewsTable[]> {
+  try {
+    const company_id = await getCompanyId();
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-const UpdateInvoice = InvoiceSchema.omit({ date: true, id: true });
-const CreateInvoice = InvoiceSchema.omit({ id: true, date: true });
+    const { rows } = await sql<FormattedInterviewsTable>`
+      SELECT 
+        id,
+        company_id,
+        date,
+        topic,
+        status,
+        invite_code
+      FROM interviews 
+      WHERE company_id = ${company_id}
+      AND (
+        topic ILIKE ${`%${query}%`} OR 
+        status ILIKE ${`%${query}%`} OR
+        invite_code ILIKE ${`%${query}%`}
+      )
+      ORDER BY date DESC
+      LIMIT ${ITEMS_PER_PAGE}
+      OFFSET ${offset}
+    `;
+
+    return rows;
+  } catch (error) {
+    console.error('Error fetching interviews:', error);
+    throw new Error('Failed to fetch interviews.');
+  }
+}
 
 export async function authenticate(
   prevState: string | undefined,
@@ -46,89 +57,89 @@ export async function authenticate(
   }
 }
 
-export async function createInvoice(prevState: State, formData: FormData) {
-  // Validate form using Zod
-  const validatedFields = CreateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
- 
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create Invoice.',
-    };
-  }
- 
-  // Prepare data for insertion into the database
-  const { customerId, amount, status } = validatedFields.data;
-  const amountInCents = amount * 100;
-  const date = new Date().toISOString().split('T')[0];
- 
-  // Insert data into the database
+
+// Get total pages for interviews
+export async function fetchInterviewPages(query: string = ''): Promise<number> {
   try {
-    await sql`
-      INSERT INTO invoices (customer_id, amount, status, date)
-      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+    const company_id = await getCompanyId();
+    
+    const { rows } = await sql`
+      SELECT COUNT(*)::integer
+      FROM interviews
+      WHERE company_id = ${company_id}
+      AND (
+        topic ILIKE ${`%${query}%`} OR 
+        status ILIKE ${`%${query}%`} OR
+        invite_code ILIKE ${`%${query}%`}
+      )
     `;
+
+    const totalPages = Math.ceil(Number(rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
   } catch (error) {
-    // If a database error occurs, return a more specific error.
-    return {
-      message: 'Database Error: Failed to Create Invoice.',
-    };
+    console.error('Error fetching interview pages:', error);
+    throw new Error('Failed to fetch total pages.');
   }
- 
-  // Revalidate the cache for the invoices page and redirect the user.
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
 }
 
-export async function updateInvoice(
-  id: string,
-  prevState: State,
-  formData: FormData,
-) {
-  const validatedFields = UpdateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
- 
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Update Invoice.',
-    };
-  }
- 
-  const { customerId, amount, status } = validatedFields.data;
-  const amountInCents = amount * 100;
- 
+// Fetch participants
+export async function fetchParticipants(
+  query: string = '',
+  currentPage: number = 1,
+): Promise<FormattedParticipantsTable[]> {
   try {
-    await sql`
-      UPDATE invoices
-      SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-      WHERE id = ${id}
+    const company_id = await getCompanyId();
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    const { rows } = await sql<FormattedParticipantsTable>`
+      SELECT 
+        id,
+        company_id,
+        first,
+        last,
+        email,
+        phone
+      FROM participants 
+      WHERE company_id = ${company_id}
+      AND (
+        first ILIKE ${`%${query}%`} OR 
+        last ILIKE ${`%${query}%`} OR 
+        email ILIKE ${`%${query}%`} OR
+        phone ILIKE ${`%${query}%`}
+      )
+      ORDER BY last, first
+      LIMIT ${ITEMS_PER_PAGE}
+      OFFSET ${offset}
     `;
+
+    return rows;
   } catch (error) {
-    return { message: 'Database Error: Failed to Update Invoice.' };
+    console.error('Error fetching participants:', error);
+    throw new Error('Failed to fetch participants.');
   }
- 
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
 }
 
-export async function deleteInvoice(id: string) {
-  // throw new Error('Failed to Delete Invoice')
- try {
-    await sql`DELETE FROM invoices WHERE id = ${id}`;
-    revalidatePath("/dashboard/invoices");
-    return { message: 'Deleted Invoice' }
- } catch (error) {
-    return {
-      message: 'Database Error: Failed to Delete Invoice'
-    }
- }
-}
+// Get total pages for participants
+// export async function fetchParticipantPages(query: string = ''): Promise<number> {
+//   try {
+//     const company_id = await getCompanyId();
+    
+//     const { rows } = await sql`
+//       SELECT COUNT(*)::integer
+//       FROM participants
+//       WHERE company_id = ${company_id}
+//       AND (
+//         first ILIKE ${`%${query}%`} OR 
+//         last ILIKE ${`%${query}%`} OR 
+//         email ILIKE ${`%${query}%`} OR
+//         phone ILIKE ${`%${query}%`}
+//       )
+//     `;
+
+//     const totalPages = Math.ceil(Number(rows[0].count) / ITEMS_PER_PAGE);
+//     return totalPages;
+//   } catch (error) {
+//     console.error('Error fetching participant pages:', error);
+//     throw new Error('Failed to fetch total pages.');
+//   }
+// }
