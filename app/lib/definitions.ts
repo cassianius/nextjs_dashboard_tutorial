@@ -72,6 +72,7 @@ export type FormattedInterviewsTable = {
   company_id: string;
   date: string;
   topic: string;
+  industry: string;
   status: string;
   invite_code: string;
 };

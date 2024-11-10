@@ -22,12 +22,14 @@ export async function fetchInterviews(
         company_id,
         date,
         topic,
+        industry,
         status,
         invite_code
       FROM interviews 
       WHERE company_id = ${company_id}
       AND (
         topic ILIKE ${`%${query}%`} OR 
+        industry ILIKE ${`%${query}%`} OR 
         status ILIKE ${`%${query}%`} OR
         invite_code ILIKE ${`%${query}%`}
       )
