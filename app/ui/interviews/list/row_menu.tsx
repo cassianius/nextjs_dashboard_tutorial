@@ -42,7 +42,7 @@ export const RowMenu = ({ status, id }: { status: string; id: number }) => {
                   </button>
                 )}
                 <button
-                  onClick={() => handleNavigation(`/interviews/${id}`)}
+                  onClick={() => handleNavigation(`interviews/${id}`)}
                   className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
                   role="menuitem"
                 >

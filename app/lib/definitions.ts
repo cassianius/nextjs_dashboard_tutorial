@@ -46,7 +46,8 @@ export type Interview = {
   allow_tangents: boolean;
   participant_ids: string[];
   status: string;
-  invite_code: string;
+  access_code_signup: string;
+  access_code_interview: string;
 };
 
 export type AccessCode = {
@@ -74,5 +75,5 @@ export type FormattedInterviewsTable = {
   topic: string;
   industry: string;
   status: string;
-  invite_code: string;
+  access_code_signup: string;
 };

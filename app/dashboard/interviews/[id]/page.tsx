@@ -1,4 +1,3 @@
-
 import { fetchInterviewById } from '../../../lib/actions';
 import { getCompanyId } from '@/auth';
 import InterviewDetails from './interview-details';
@@ -9,27 +8,16 @@ import { headers } from 'next/headers';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// Add cache-control headers
-export async function generateMetadata() {
-  return {
-    headers: {
-      'Cache-Control': 'no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-    },
-  };
-}
-
 export default async function InterviewPage({
-  params
+  params,
 }: {
-  params: { id: string }
+  params: { id: string };
 }) {
-  // Force dynamic behavior by reading headers
+  // Ensure headers are read to enforce dynamic rendering
   headers();
-  
+
   const companyId = await getCompanyId();
-  
+
   if (!companyId) {
     redirect('/login');
   }
@@ -40,5 +28,9 @@ export default async function InterviewPage({
     notFound();
   }
 
-  return <InterviewDetails interview={interview} />;
+  return (
+    <InterviewDetails
+      interview={interview}/>
+  );
 }
+

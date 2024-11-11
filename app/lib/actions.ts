@@ -6,6 +6,7 @@ import { FormattedInterviewsTable, FormattedParticipantsTable } from '@/app/lib/
 import { signIn } from '@/auth';
 import { Interview } from '@/app/lib/definitions';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -26,14 +27,14 @@ export async function fetchInterviews(
         topic,
         industry,
         status,
-        invite_code
+        access_code_signup
       FROM interviews 
       WHERE company_id = ${company_id}
       AND (
         topic ILIKE ${`%${query}%`} OR 
         industry ILIKE ${`%${query}%`} OR 
         status ILIKE ${`%${query}%`} OR
-        invite_code ILIKE ${`%${query}%`}
+        access_code_signup ILIKE ${`%${query}%`}
       )
       ORDER BY date DESC
       LIMIT ${ITEMS_PER_PAGE}
@@ -74,7 +75,7 @@ export async function fetchInterviewPages(query: string = ''): Promise<number> {
       AND (
         topic ILIKE ${`%${query}%`} OR 
         status ILIKE ${`%${query}%`} OR
-        invite_code ILIKE ${`%${query}%`}
+        access_code_signup ILIKE ${`%${query}%`}
       )
     `;
 
@@ -186,8 +187,12 @@ export async function createInterview(
     const emptyArray = '{}';
     
     // Generate a unique invite code
-    const invite_code = Array.from({length: 6}, () => Math.floor(Math.random() * 10)).join('');
-    
+    const access_code_interview = Array.from({length: 6}, () => Math.floor(Math.random() * 10)).join('');
+    const access_code_signup = Array.from({length: 6}, () => {
+      // Characters to choose from (numbers and uppercase letters)
+      const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      return chars.charAt(Math.floor(Math.random() * chars.length));
+  }).join('');
     // Insert the interview into the database
     const { rows } = await sql`
       INSERT INTO interviews (
@@ -207,7 +212,8 @@ export async function createInterview(
         allow_tangents,
         participant_ids,
         status,
-        invite_code
+        access_code_signup,
+        access_code_interview,
       ) VALUES (
         ${company_id},
         ${date},
@@ -225,7 +231,8 @@ export async function createInterview(
         ${allow_tangents},
         ${emptyArray}::text[],
         ${action},
-        ${invite_code}
+        ${access_code_signup},
+        ${access_code_interview}
       )
       RETURNING id
     `;
@@ -273,7 +280,8 @@ export async function fetchInterviewById(
         allow_tangents,
         participant_ids,
         status,
-        invite_code
+        access_code_signup,
+        access_code_interview
       FROM interviews 
       WHERE company_id = ${companyId} 
       AND id = ${interviewId}::integer
@@ -302,7 +310,8 @@ export async function fetchInterviewById(
       allow_tangents: rows[0].allow_tangents,
       participant_ids: rows[0].participant_ids || [],
       status: rows[0].status,
-      invite_code: rows[0].invite_code
+      access_code_signup: rows[0].access_code_signup,
+      access_code_interview: rows[0].access_code_interview
     };
 
     return { data: interviewData };
@@ -310,5 +319,89 @@ export async function fetchInterviewById(
   } catch (error) {
     console.error('Error fetching interview:', error);
     return { error: 'Failed to fetch interview details.' };
+  }
+}
+
+export async function verifyInterviewAccessCode(
+  companyId: string,
+  interviewId: string,
+  accessCode: string
+): Promise<{
+  isValid: boolean;
+  interview?: Interview;
+  error?: string;
+}> {
+  try {
+    const { rows } = await sql`
+      /* NO CACHE */
+      SELECT 
+        id,
+        company_id,
+        date,
+        topic,
+        company,
+        industry,
+        duration,
+        max_participants,
+        interviewer_style,
+        response_depth,
+        bias_migitation_level,
+        key_questions,
+        probing_questions,
+        desired_outcomes,
+        allow_tangents,
+        participant_ids,
+        status,
+        access_code_signup,
+        access_code_interview
+      FROM interviews 
+      WHERE company_id = ${companyId}
+      AND id = ${interviewId}::integer
+      AND access_code_signup = ${accessCode}
+      AND status = 'publish'
+      AND max_participants > array_length(participant_ids, 1)
+      LIMIT 1
+    `;
+
+    if (rows.length === 0) {
+      return { 
+        isValid: false, 
+        error: 'Invalid access code or interview is no longer available.' 
+      };
+    }
+
+    const interviewData: Interview = {
+      id: rows[0].id,
+      company_id: rows[0].company_id,
+      date: rows[0].date,
+      topic: rows[0].topic,
+      company: rows[0].company,
+      industry: rows[0].industry,
+      duration: rows[0].duration,
+      max_participants: rows[0].max_participants,
+      interviewer_style: rows[0].interviewer_style,
+      response_depth: rows[0].response_depth,
+      bias_migitation_level: rows[0].bias_migitation_level,
+      key_questions: rows[0].key_questions || [],
+      probing_questions: rows[0].probing_questions || [],
+      desired_outcomes: rows[0].desired_outcomes || [],
+      allow_tangents: rows[0].allow_tangents,
+      participant_ids: rows[0].participant_ids || [],
+      status: rows[0].status,
+      access_code_signup: rows[0].access_code_signup,
+      access_code_interview: rows[0].access_code_interview
+    };
+
+    return { 
+      isValid: true, 
+      interview: interviewData 
+    };
+
+  } catch (error) {
+    console.error('Error verifying access code:', error);
+    return { 
+      isValid: false, 
+      error: 'Failed to verify access code.' 
+    };
   }
 }

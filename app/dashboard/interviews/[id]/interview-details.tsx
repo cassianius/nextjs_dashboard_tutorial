@@ -3,14 +3,15 @@
 import { useState } from 'react';
 import { Interview } from '../../../lib/definitions'
 import { LinkIcon, KeyIcon } from '@heroicons/react/24/outline';
+import { getCompanyId } from '@/auth';
 
 export default function InterviewDetails({
-  interview
+  interview,
 }: {
   interview: Interview;
 }) {
   const [showCopyTooltip, setShowCopyTooltip] = useState('');
-  const shareableLink = `www.domain.com/onboarding/${interview.id}`;
+  const shareableLink = `${process.env.NEXT_PUBLIC_BASE_URL}/onboard?cid=${interview.company_id}&iid=${interview.id}`;
 
   const copyToClipboard = async (text: string, type: string) => {
     try {
@@ -63,19 +64,18 @@ export default function InterviewDetails({
           </div>
         </div>
 
-        {/* Access Code Card */}
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <KeyIcon className="h-5 w-5 text-blue-400" />
               <div>
                 <h3 className="text-white font-medium">Access Code</h3>
-                <p className="text-sm text-gray-400">{interview.invite_code}</p>
+                <p className="text-sm text-gray-400">{interview.access_code_signup}</p>
               </div>
             </div>
             <div className="relative">
               <button
-                onClick={() => copyToClipboard(interview.invite_code, 'code')}
+                onClick={() => copyToClipboard(interview.access_code_signup, 'code')}
                 className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
                 Copy
