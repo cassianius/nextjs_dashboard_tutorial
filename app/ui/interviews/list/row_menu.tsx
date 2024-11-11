@@ -1,11 +1,18 @@
-"use_client";
+"use client";
 
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const RowMenu = ({ status, id }: { status: string; id: number }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter();
   
+    const handleNavigation = (path: string) => {
+      setIsOpen(false);
+      router.push(path);
+    };
+
     return (
       <div className="relative inline-block text-left">
         <button
@@ -26,21 +33,21 @@ export const RowMenu = ({ status, id }: { status: string; id: number }) => {
             >
               <div className="py-1" role="menu" aria-orientation="vertical">
                 {status === "draft" && (
-                  <a
-                    href={`/interviews/${id}/edit`}
-                    className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                  <button
+                    onClick={() => handleNavigation(`/interviews/${id}/edit`)}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
                     role="menuitem"
                   >
                     Edit
-                  </a>
+                  </button>
                 )}
-                <a
-                  href={`/interviews/${id}`}
-                  className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                <button
+                  onClick={() => handleNavigation(`/interviews/${id}`)}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
                   role="menuitem"
                 >
                   View
-                </a>
+                </button>
               </div>
             </div>
           </>
