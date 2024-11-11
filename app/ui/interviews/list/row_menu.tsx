@@ -3,7 +3,7 @@
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
 
-export const RowMenu = ({ status, id }: { status: string; id: string }) => {
+export const RowMenu = ({ status, id }: { status: string; id: number }) => {
     const [isOpen, setIsOpen] = useState(false);
   
     return (

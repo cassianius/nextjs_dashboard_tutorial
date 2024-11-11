@@ -29,7 +29,7 @@ export type Participant = {
 };
 
 export type Interview = {
-  id: string; 
+  id: number;  // Changed from string to number since it's SERIAL in PostgreSQL
   company_id: string;
   date: string;
   topic: string;
@@ -68,7 +68,7 @@ export type FormattedParticipantsTable = {
 };
 
 export type FormattedInterviewsTable = {
-  id: string; 
+  id: number;  // Changed from string to number since it's SERIAL in PostgreSQL
   company_id: string;
   date: string;
   topic: string;

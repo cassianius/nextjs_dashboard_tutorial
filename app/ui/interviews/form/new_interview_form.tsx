@@ -12,98 +12,34 @@ import { Button } from '../../button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Participant } from '@/app/lib/definitions';
-
-type AddInterviewState = {
-    error?: string;
-} | undefined;
-
-const addInterview = async () => {
-    return { error: undefined };
-};
-
-function SaveButtons() {
-    const { pending } = useFormStatus();
-    
-    return (
-        <div className="mt-12 flex gap-4">
-            <Button
-                className="flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-500"
-                aria-disabled={pending}
-                name="action"
-                value="draft"
-            >
-                <DocumentIcon className="h-4 w-4" />
-                Save as Draft
-            </Button>
-            
-            <Button
-                className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500"
-                aria-disabled={pending}
-                name="action"
-                value="publish"
-            >
-                <RocketLaunchIcon className="h-4 w-4" />
-                Publish
-            </Button>
-        </div>
-    );
-}
+import { createInterview } from '@/app/lib/actions';
 
 export default function FocusGroupSimulationForm() {
-    const [state, action] = useFormState(addInterview, undefined);
     const router = useRouter();
     const [showOtherIndustry, setShowOtherIndustry] = useState(false);
-    const [selectedParticipants, setSelectedParticipants] = useState<Participant[]>([]);
-    const [participantEmail, setParticipantEmail] = useState('');
-    const [participantError, setParticipantError] = useState('');
     const [questions, setQuestions] = useState<string[]>(['']);
     const [outcomes, setOutcomes] = useState<string[]>(['']);
-
-    const handleAddParticipant = async () => {
-        setParticipantError('');
-        if (!participantEmail) {
-            setParticipantError('Please enter an email address');
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/participants/search?email=${encodeURIComponent(participantEmail)}`);
-            const participant = await response.json();
-
-            if (!participant) {
-                setParticipantError('Participant not found');
-                return;
-            }
-
-            if (selectedParticipants.some(p => p.id === participant.id)) {
-                setParticipantError('Participant already added');
-                return;
-            }
-
-            setSelectedParticipants([...selectedParticipants, participant]);
-            setParticipantEmail('');
-        } catch (error) {
-            setParticipantError('Error finding participant');
-        }
-    };
-
-    const removeParticipant = (participantId: string) => {
-        setSelectedParticipants(selectedParticipants.filter(p => p.id !== participantId));
-    };
 
     const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setShowOtherIndustry(e.target.value === 'other');
     };
 
     const handleSubmit = async (formData: FormData) => {
-        // Implementation here
-        const action = formData.get('action');
+        const action = formData.get('action') as 'draft' | 'publish';
         
-        // Implementation here - you can use the action value
-        // to determine whether to save as draft or publish
-        console.log('Form action:', action);
-    
+        // Add the questions and outcomes as JSON strings
+        formData.set('questions', JSON.stringify(questions));
+        formData.set('outcomes', JSON.stringify(outcomes));
+                
+        const result = await createInterview(formData, action);
+        
+        if (result.error) {
+            // Handle error
+            console.error(result.error);
+        } else {
+            // Redirect to interviews page on success
+            router.push('/interviews');
+        }
     };
 
     const addQuestion = () => {
@@ -394,8 +330,8 @@ export default function FocusGroupSimulationForm() {
                         </p>
                     </div>
 
-                    {/* Desired Outcomes */}
-                    <div className="mt-1">
+                  {/* Desired Outcomes */}
+                  <div className="mt-6">
                         <div className="flex justify-between items-center">
                             <label
                                 className="mb-3 mt-5 block text-xs font-medium text-white"
@@ -455,107 +391,28 @@ export default function FocusGroupSimulationForm() {
                         </label>
                     </div>
 
-                    {/* Participant Selection */}
-                    <div className="mt-8">
-                        <div className="flex justify-between items-center">
-                            <label
-                                className="mb-3 block text-xs font-medium text-white"
-                                htmlFor="participant_email"
-                            >
-                                Participants
-                            </label>
-                        </div>
-
-                        {/* Add Participant Input */}
-                        <div className="flex gap-2">
-                            <div className="flex-grow relative">
-                                <input
-                                    className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
-                                    type="email"
-                                    id="participant_email"
-                                    value={participantEmail}
-                                    onChange={(e) => setParticipantEmail(e.target.value)}
-                                    placeholder="Enter participant email"
-                                />
-                            </div>
-                            <button
-                                type="button"
-                                onClick={handleAddParticipant}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-500 transition-colors flex items-center gap-1"
-                            >
-                                <PlusCircleIcon className="h-4 w-4" />
-                                Add
-                            </button>
-                        </div>
-
-                        {participantError && (
-                            <p className="text-sm text-red-500 mt-1">{participantError}</p>
-                        )}
-
-                        {/* Selected Participants List */}
-                        <div className="mt-4 space-y-2">
-                            {selectedParticipants.map((participant) => (
-                                <div
-                                    key={participant.id}
-                                    className="flex items-center justify-between p-3 rounded-md bg-gray-800 border border-gray-700"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
-                                            <span className="text-sm text-white">
-                                                {participant.first[0]}{participant.last[0]}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-white">
-                                                {participant.first} {participant.last}
-                                            </p>
-                                            <p className="text-xs text-gray-400">{participant.email}</p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeParticipant(participant.id)}
-                                        className="text-gray-400 hover:text-red-400 transition-colors"
-                                        aria-label="Remove participant"
-                                    >
-                                        <XCircleIcon className="h-5 w-5" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-
-                        {selectedParticipants.length > 0 && (
-                            <p className="text-xs text-gray-400 mt-2">
-                                {selectedParticipants.length} participant{selectedParticipants.length !== 1 ? 's' : ''} added
-                            </p>
-                        )}
-                    </div>
-
-                    <SaveButtons />
-                    <div className="flex h-8 items-end space-x-1">
-                        {state?.error && (
-                            <>
-                                <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-                                <p aria-live="polite" className="text-sm text-red-500">
-                                    {state.error}
-                                </p>
-                            </>
-                        )}
+                    {/* Save Buttons */}
+                    <div className="mt-12 flex gap-4">
+                        {/* <Button
+                            className="flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-500"
+                            name="action"
+                            value="draft"
+                        >
+                            <DocumentIcon className="h-4 w-4" />
+                            Save as Draft
+                        </Button> */}
+                        
+                        <Button
+                            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500"
+                            name="action"
+                            value="publish"
+                        >
+                            <RocketLaunchIcon className="h-4 w-4" />
+                            Publish
+                        </Button>
                     </div>
                 </div>
             </div>
         </form>
     );
 }
-
-function SaveButton() {
-    const { pending } = useFormStatus();
-    return (
-        <Button className="mt-12 w-[70px] justify-center items-center" aria-disabled={pending}>
-            Save
-        </Button>
-    );
-}
-
-
-//Dummy data
