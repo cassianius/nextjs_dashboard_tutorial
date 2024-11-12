@@ -21,7 +21,7 @@ const signUp = async () => {
   return { error: undefined };
 };
 
-export default function OnboardForm() {
+export default function RegistrationForm() {
   const [state, action] = useFormState(signUp, undefined);
   const router = useRouter();
   
@@ -33,17 +33,18 @@ export default function OnboardForm() {
     <form action={handleSubmit}>
       <div className="flex-1 rounded-lg bg-gray-900 px-6 pb-4 pt-8">
         <div className="mb-8">
-          <h1 className={`${lusitana.className} mb-3 text-white text-2xl`}>
-            Create your account
+          <h1 className={`${lusitana.className} mb-4 text-white text-2xl`}>
+            Interview Registration
           </h1>
-          <p className="text-gray-300 text-sm">
-            Welcome to our interview platform! After signing up, you'll receive:
+          <p className="text-gray-300 text-sm mb-4">
+            Welcome to Convocast!
           </p>
-          <ul className="mt-2 text-gray-300 text-sm list-disc list-inside space-y-1">
-            <li>A unique access code for your interviews</li>
-            <li>A dedicated phone number to conduct interviews</li>
-            <li>Immediate access to schedule your first interview</li>
-          </ul>
+          <p className="text-gray-300 text-sm mb-4">
+            Please fill out the form below. You will also need to enter the access code provided to you
+          </p>
+          <p className="text-gray-300 text-sm mb-4">
+            Once complete, you'll receive a phone number and pin to access your interview.
+          </p>
         </div>
 
         <div className="w-full">
@@ -174,8 +175,8 @@ export default function OnboardForm() {
 function SignUpButton() {
   const { pending } = useFormStatus();
   return (
-    <Button className="mt-4 w-full" aria-disabled={pending}>
-      Continue to Company Profile <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+    <Button className="mt-12 w-full" aria-disabled={pending}>
+      Register<ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
     </Button>
   );
 }

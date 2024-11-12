@@ -12,7 +12,7 @@ import { Button } from '../../button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createInterview } from '@/app/lib/actions';
+import { createInterview } from '@/app/lib/actions/createInterview';
 
 export default function FocusGroupSimulationForm() {
     const router = useRouter();
@@ -25,7 +25,7 @@ export default function FocusGroupSimulationForm() {
     };
 
     const handleSubmit = async (formData: FormData) => {
-        const action = formData.get('action') as 'draft' | 'publish';
+        const action = formData.get('action') as 'draft' | 'published';
         
         // Add the questions and outcomes as JSON strings
         formData.set('questions', JSON.stringify(questions));

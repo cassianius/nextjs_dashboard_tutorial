@@ -9,10 +9,10 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-      const isOnboarding = nextUrl.pathname.startsWith('/onboard');
+      const isregistrationing = nextUrl.pathname.startsWith('/registration');
       
-      // Always allow access to onboarding
-      if (isOnboarding) {
+      // Always allow access to registrationing
+      if (isregistrationing) {
         return true;
       }
       

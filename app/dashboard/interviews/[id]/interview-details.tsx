@@ -11,7 +11,7 @@ export default function InterviewDetails({
   interview: Interview;
 }) {
   const [showCopyTooltip, setShowCopyTooltip] = useState('');
-  const shareableLink = `${process.env.NEXT_PUBLIC_BASE_URL}/onboard?cid=${interview.company_id}&iid=${interview.id}`;
+  const shareableLink = `${process.env.NEXT_PUBLIC_BASE_URL}/registration?cid=${interview.company_id}&iid=${interview.id}`;
 
   const copyToClipboard = async (text: string, type: string) => {
     try {
@@ -64,16 +64,17 @@ export default function InterviewDetails({
           </div>
         </div>
 
+        {/* Access Code Card - Updated with vertical centering */}
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between h-full">
             <div className="flex items-center space-x-3">
-              <KeyIcon className="h-5 w-5 text-blue-400" />
+              <KeyIcon className="h-5 w-5 text-blue-400 flex-shrink-0" />
               <div>
-                <h3 className="text-white font-medium">Access Code</h3>
-                <p className="text-sm text-gray-400">{interview.access_code_signup}</p>
+                <h3 className="text-white font-medium leading-tight">Access Code</h3>
+                <p className="text-sm text-gray-400 mt-0.5">{interview.access_code_signup}</p>
               </div>
             </div>
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               <button
                 onClick={() => copyToClipboard(interview.access_code_signup, 'code')}
                 className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"

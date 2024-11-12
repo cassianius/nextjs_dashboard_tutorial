@@ -1,4 +1,4 @@
-import { fetchInterviewById } from '../../../lib/actions';
+import { fetchInterviewById } from '../../../lib/actions/fetchInterviewById';
 import { getCompanyId } from '@/auth';
 import InterviewDetails from './interview-details';
 import { notFound, redirect } from 'next/navigation';

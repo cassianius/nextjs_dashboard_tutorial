@@ -3,7 +3,7 @@ import Search from "@/app/ui/search";
 import Table from "@/app/ui/interviews/list/table";
 import { AddInterview } from "@/app/ui/interviews/buttons";
 import { lusitana } from "@/app/ui/fonts";
-import { fetchInterviews, fetchInterviewPages } from '@/app/lib/actions';
+import { fetchInterviewPages } from '@/app/lib/actions/fetchInterviews';
 import { Suspense } from 'react';
 
 export default async function Page({

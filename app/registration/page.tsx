@@ -1,9 +1,10 @@
-// app/onboard/page.tsx
+// app/registration/page.tsx
 import { notFound } from 'next/navigation';
 import AcmeLogo from '@/app/ui/acme-logo';
-import OnboardForm from '@/app/ui/onboard/onboard-form';
-import { fetchInterviewById } from '../lib/actions';
+import registrationForm from '@/app/ui/registration/registration-form';
+import { fetchInterviewById } from '../lib/actions/fetchInterviewById';
 import { Metadata } from 'next';
+import RegistrationForm from '@/app/ui/registration/registration-form';
 
 export const metadata: Metadata = {
   title: 'Sign Up - Interview Platform',
@@ -17,7 +18,7 @@ type Props = {
   };
 };
 
-export default async function OnboardPage({ searchParams }: Props) {
+export default async function registrationPage({ searchParams }: Props) {
   const { cid, iid } = searchParams;
 
   // // If either parameter is missing, show 404
@@ -48,7 +49,7 @@ export default async function OnboardPage({ searchParams }: Props) {
             <AcmeLogo />
           </div>
         </div>
-        <OnboardForm/>
+        <RegistrationForm/>
       </div>
     </main>
   );

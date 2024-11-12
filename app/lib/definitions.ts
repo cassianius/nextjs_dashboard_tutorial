@@ -19,7 +19,7 @@ export type Company = {
 
 
 export type Participant = {
-  id: string;
+  id: number;
   company_id: string;
   first: string;
   last: string;
@@ -44,7 +44,7 @@ export type Interview = {
   key_questions: string[];
   desired_outcomes: string[];
   allow_tangents: boolean;
-  participant_ids: string[];
+  participant_ids: number[];  // Changed from string[] to number[]
   status: string;
   access_code_signup: string;
   access_code_interview: string;
@@ -54,13 +54,13 @@ export type AccessCode = {
   id: string;
   company_id: string;
   interview_id: string;
-  participant_id: string;
+  participant_ids: number[];  // Changed from string[] to number[]
   expiration: string;
 };
 
 
 export type FormattedParticipantsTable = {
-  id: string;
+  id: number;
   company_id: string;
   first: string;
   last: string;
