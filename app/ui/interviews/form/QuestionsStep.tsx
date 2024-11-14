@@ -6,7 +6,10 @@ import { XCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
 import { useInterviewForm } from './InterviewFormContext';
 
-const [generatedQuestions, setGeneratedQuestions] = useState(['']);
+export const QuestionsStep = () => {
+    
+  const { formData, updateFormData } = useInterviewForm();
+  const [generatedQuestions, setGeneratedQuestions] = useState(['']);
 
   const addQuestion = () => {
     if (generatedQuestions.length < 10) {
@@ -26,9 +29,6 @@ const [generatedQuestions, setGeneratedQuestions] = useState(['']);
     newQuestions[index] = value;
     setGeneratedQuestions(newQuestions);
   };
-
-export const QuestionsStep = () => {
-  const { formData, updateFormData } = useInterviewForm();
 
   return  (
     <div className="max-w-[600px]">
