@@ -1,8 +1,8 @@
-import { fetchInterviews } from "@/app/lib/actions";
 import { TableRowMobile } from "./table_row_mobile";
 import { FormattedInterviewsTable } from "@/app/lib/definitions";
 import { TableHeader } from "./table_header";
 import { TableRow } from "./table_row";
+import { fetchInterviews } from "@/app/lib/actions/fetchInterviews";
 
 const InterviewsTable = async ({
   query,
@@ -11,6 +11,7 @@ const InterviewsTable = async ({
   query: string;
   currentPage: number;
 }) => {
+  
   const interviews = await fetchInterviews(query, currentPage) as FormattedInterviewsTable[];
 
   return (

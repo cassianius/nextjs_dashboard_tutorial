@@ -1,5 +1,5 @@
 import { FormattedParticipantsTable } from '@/app/lib/definitions';
-import { fetchParticipants } from '@/app/lib/actions';
+import { fetchParticipants } from '@/app/lib/actions/fetchParticipants';
 import Link from 'next/link';
 
 export default async function ParticipantsTable({
