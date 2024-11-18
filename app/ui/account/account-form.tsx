@@ -12,7 +12,7 @@ import { Button } from '../button'
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 
-type AddParticipantState = {
+type AddApplicantState = {
     error?: string;
 } | undefined;
 

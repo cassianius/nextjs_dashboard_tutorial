@@ -10,70 +10,76 @@ export type Company = {
   id: string;
   date: string;
   name: string;
+  headquarters: string;
   industry: string;
+  size: number;
   website: string;
-  access_code: string;
   date_founded: string;
-  user_ids: string[];
 };
 
-
-export type Participant = {
+export type Job = {
   id: number;
-  company_id: string;
+  position: string;
+  role: string;
+  type: string; //full time, contract, etc.
+  metadata: string;
+};
+
+export type Applicant = {
+  id: number;
   first: string;
   last: string;
   email: string;
   phone: string;
-  image_url: string;
+  metadata: string;
 };
 
 export type Interview = {
   id: number;  // Changed from string to number since it's SERIAL in PostgreSQL
-  company_id: string;
   date: string;
-  topic: string;
-  company: string;
-  industry: string;
+  company_id: string;
+  job_id: string;
+  applicant_id: string;
   duration: number;
-  max_participants: number;
+  max_applicants: number;
   interviewer_style: string;
   response_depth: string;
   bias_migitation_level: string;
-  probing_questions: string[];
-  key_questions: string[];
-  desired_outcomes: string[];
+  topics: string[];
   allow_tangents: boolean;
-  participant_ids: number[];  // Changed from string[] to number[]
   status: string;
-  access_code_signup: string;
-  access_code_interview: string;
 };
 
-export type AccessCode = {
+export type InterviewAccess = {
   id: string;
-  company_id: string;
-  interview_id: string;
-  participant_ids: number[];  // Changed from string[] to number[]
-  expiration: string;
-};
-
-
-export type FormattedParticipantsTable = {
-  id: number;
-  company_id: string;
-  first: string;
-  last: string;
-  email: string;
-  phone: string;
-};
-
-export type FormattedInterviewsTable = {
-  id: number;  // Changed from string to number since it's SERIAL in PostgreSQL
-  company_id: string;
   date: string;
-  topic: string;
-  industry: string;
-  status: string;
-  access_code_signup: string;
+  interview_id: string;
+  access_code: string;
+  pin: string;
+  date_expiration: string;
 };
+
+// Tables
+
+// export type FormattedCompaniesTable = {
+//   id: number;
+//   name: string;
+//   industry: string;
+//   headquarters: string;
+// };
+
+// export type FormattedApplicantsTable = {
+//   id: number;
+//   first: string;
+//   last: string;
+//   email: string;
+// };
+
+// export type FormattedInterviewsTable = {
+//   id: number;  // Changed from string to number since it's SERIAL in PostgreSQL
+//   date: string;
+//   company: string;
+//   position: string;
+//   applicant: string;
+//   status: string;
+// };

@@ -2,17 +2,25 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
+// Define the job interface
+interface Job {
+  id: string;
+  company: string;
+  website: string;
+  headquarters: string;
+  size: '1' | '10+' | '100+' | '1000+';
+  jobDescription: string;
+}
+
 // Define the shape of our form data
 interface InterviewFormData {
-  // Job Details
-  jobDescription: string;
-  company: string;
+  selectedJob?: Job;
   roleCategory: string;
   interviewDuration: string;
   interviewStyle: string;
   
-  // Candidate
-  candidateEmail: string;
+  // Applicant
+  applicantEmail: string;
   resumeFile?: File;
   
   // Questions
@@ -25,15 +33,13 @@ interface InterviewFormData {
 
 // Default values
 const defaultFormData: InterviewFormData = {
-  jobDescription: '',
-  company: '',
   roleCategory: '',
   interviewDuration: '30 minutes',
   interviewStyle: 'Friendly',
-  candidateEmail: '',
+  applicantEmail: '',
   questions: [''],
   expiryDate: '',
-  emailTemplate: `Dear [Candidate],
+  emailTemplate: `Dear [Applicant],
 
 Please complete your phone interview by calling +1 (555) 0123-4567 and entering access code: 1234
 
@@ -47,12 +53,15 @@ interface InterviewFormContextType {
   formData: InterviewFormData;
   updateFormData: (field: keyof InterviewFormData, value: any) => void;
   submitForm: () => Promise<void>;
+  jobs: Job[];
+  addJob: (newJob: Omit<Job, 'id'>) => Job;
 }
 
 const InterviewFormContext = createContext<InterviewFormContextType | undefined>(undefined);
 
 export function InterviewFormProvider({ children }: { children: React.ReactNode }) {
   const [formData, setFormData] = useState<InterviewFormData>(defaultFormData);
+  const [jobs, setJobs] = useState<Job[]>([]);
 
   const updateFormData = (field: keyof InterviewFormData, value: any) => {
     setFormData(prev => ({
@@ -61,10 +70,17 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
     }));
   };
 
+  const addJob = (newJob: Omit<Job, 'id'>) => {
+    const job: Job = {
+      ...newJob,
+      id: crypto.randomUUID()
+    };
+    setJobs(prev => [...prev, job]);
+    return job;
+  };
+
   const submitForm = async () => {
     try {
-      // Here you would make your API call to save the data
-      // For Next.js, you might want to use the route handlers
       const response = await fetch('/api/interviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -84,7 +100,7 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
   };
 
   return (
-    <InterviewFormContext.Provider value={{ formData, updateFormData, submitForm }}>
+    <InterviewFormContext.Provider value={{ formData, updateFormData, submitForm, jobs, addJob }}>
       {children}
     </InterviewFormContext.Provider>
   );

@@ -13,17 +13,17 @@ import { Button } from '../button'
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 
-type AddParticipantState = {
+type AddApplicantState = {
     error?: string;
 } | undefined;
 
 // Temporary simplified version that just allows navigation
-const addParticipant = async () => {
+const addApplicant = async () => {
     return { error: undefined };
 };
 
-export default function AddParticipantForm() {
-    const [state, action] = useFormState(addParticipant, undefined);
+export default function AddApplicantForm() {
+    const [state, action] = useFormState(addApplicant, undefined);
     const router = useRouter();
 
     // Handle form submission

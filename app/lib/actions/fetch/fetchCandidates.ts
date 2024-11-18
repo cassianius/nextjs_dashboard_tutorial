@@ -1,20 +1,20 @@
 'use server'
 import { sql } from '@vercel/postgres';
 import { getCompanyId } from '@/auth';
-import { FormattedParticipantsTable } from '@/app/lib/definitions';
+import { FormattedApplicantsTable } from '@/app/lib/definitions';
 
 const ITEMS_PER_PAGE = 10;
 
-// Fetch participants
-export async function fetchParticipants(
+// Fetch applicants
+export async function fetchApplicants(
   query: string = '',
   currentPage: number = 1,
-): Promise<FormattedParticipantsTable[]> {
+): Promise<FormattedApplicantsTable[]> {
   try {
     const company_id = await getCompanyId();
     const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-    const { rows } = await sql<FormattedParticipantsTable>`
+    const { rows } = await sql<FormattedApplicantsTable>`
       SELECT 
         id,
         company_id,
@@ -22,7 +22,7 @@ export async function fetchParticipants(
         last,
         email,
         phone
-      FROM participants 
+      FROM applicants 
       WHERE company_id = ${company_id}
       AND (
         first ILIKE ${`%${query}%`} OR 
@@ -37,19 +37,19 @@ export async function fetchParticipants(
 
     return rows;
   } catch (error) {
-    console.error('Error fetching participants:', error);
-    throw new Error('Failed to fetch participants.');
+    console.error('Error fetching applicants:', error);
+    throw new Error('Failed to fetch applicants.');
   }
 }
 
-// Get total pages for participants
-// export async function fetchParticipantPages(query: string = ''): Promise<number> {
+// Get total pages for applicants
+// export async function fetchApplicantPages(query: string = ''): Promise<number> {
 //   try {
 //     const company_id = await getCompanyId();
     
 //     const { rows } = await sql`
 //       SELECT COUNT(*)::integer
-//       FROM participants
+//       FROM applicants
 //       WHERE company_id = ${company_id}
 //       AND (
 //         first ILIKE ${`%${query}%`} OR 
@@ -62,7 +62,7 @@ export async function fetchParticipants(
 //     const totalPages = Math.ceil(Number(rows[0].count) / ITEMS_PER_PAGE);
 //     return totalPages;
 //   } catch (error) {
-//     console.error('Error fetching participant pages:', error);
+//     console.error('Error fetching applicant pages:', error);
 //     throw new Error('Failed to fetch total pages.');
 //   }
 // }

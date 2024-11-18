@@ -1,37 +1,37 @@
-import { FormattedParticipantsTable } from '@/app/lib/definitions';
-import { fetchParticipants } from '@/app/lib/actions/fetchParticipants';
+import { FormattedApplicantsTable } from '@/app/lib/definitions';
+import { fetchApplicants } from '@/app/lib/actions/fetchApplicants';
 import Link from 'next/link';
 
-export default async function ParticipantsTable({
+export default async function ApplicantsTable({
   query,
   currentPage,
 }: {
   query: string;
   currentPage: number;
 }) {
-  const participants = await fetchParticipants(query, currentPage) as FormattedParticipantsTable[];
+  const applicants = await fetchApplicants(query, currentPage) as FormattedApplicantsTable[];
 
   return (
     <div className="bg-gray-800 p-6 rounded-xl shadow-lg mt-8">
 
       {/* Mobile view */}
       <div className="md:hidden">
-        {participants?.map((participant) => (
+        {applicants?.map((applicant) => (
           <div
-            key={participant.id}
+            key={applicant.id}
             className="mb-4 p-4 bg-gray-700 rounded-lg"
           >
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <h3 className="text-white font-medium">
-                  {participant.first} {participant.last}
+                  {applicant.first} {applicant.last}
                 </h3>
               </div>
-              <p className="text-gray-300 text-sm">{participant.email}</p>
-              <p className="text-gray-300 text-sm">{participant.phone}</p>
+              <p className="text-gray-300 text-sm">{applicant.email}</p>
+              <p className="text-gray-300 text-sm">{applicant.phone}</p>
               <div className="pt-2 flex justify-end space-x-4">
                 <Link 
-                  href={`/participants/${participant.id}`}
+                  href={`/applicants/${applicant.id}`}
                   className="text-blue-400 hover:text-blue-300 text-sm"
                 >
                   View
@@ -65,24 +65,24 @@ export default async function ParticipantsTable({
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
-            {participants?.map((participant) => (
-              <tr key={participant.id}>
+            {applicants?.map((applicant) => (
+              <tr key={applicant.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                  {participant.first}
+                  {applicant.first}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                  {participant.last}
+                  {applicant.last}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                  {participant.email}
+                  {applicant.email}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                  {participant.phone}
+                  {applicant.phone}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="space-x-4">
                     <Link 
-                      href={`/participants/${participant.id}`}
+                      href={`/applicants/${applicant.id}`}
                       className="text-blue-400 hover:text-blue-300"
                     >
                       View

@@ -2,7 +2,7 @@ import { TableRowMobile } from "./table_row_mobile";
 import { FormattedInterviewsTable } from "@/app/lib/definitions";
 import { TableHeader } from "./table_header";
 import { TableRow } from "./table_row";
-import { fetchInterviews } from "@/app/lib/actions/fetchInterviews";
+import { fetchInterviews } from "@/app/lib/actions/fetch/fetchInterviews";
 
 const InterviewsTable = async ({
   query,

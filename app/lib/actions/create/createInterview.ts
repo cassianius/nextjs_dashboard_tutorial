@@ -4,7 +4,7 @@
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { Participant, Interview } from '@/app/lib/definitions';
+import { Applicant, Interview } from '@/app/lib/definitions';
 import { getCompanyId } from '@/auth';
 
 export async function createInterview(
@@ -21,7 +21,7 @@ export async function createInterview(
       const industry = formData.get('industry') as string;
       const other_industry = formData.get('other_industry') as string;
       const duration = parseInt(formData.get('duration') as string);
-      const max_participants = parseInt(formData.get('max_participants') as string);
+      const max_applicants = parseInt(formData.get('max_applicants') as string);
       const interview_style = formData.get('interview_style') as string;
       const response_depth = formData.get('response_depth') as string;
       const bias_mitigation_level = formData.get('bias_mitigation') as string;
@@ -58,7 +58,7 @@ export async function createInterview(
           company,
           industry,
           duration,
-          max_participants,
+          max_applicants,
           interviewer_style,
           response_depth,
           bias_migitation_level,
@@ -66,7 +66,7 @@ export async function createInterview(
           probing_questions,
           desired_outcomes,
           allow_tangents,
-          participant_ids,
+          applicant_ids,
           status,
           access_code_signup,
           access_code_interview,
@@ -77,7 +77,7 @@ export async function createInterview(
           ${company},
           ${industry === 'other' ? other_industry : industry},
           ${duration},
-          ${max_participants},
+          ${max_applicants},
           ${interview_style},
           ${response_depth},
           ${bias_mitigation_level},

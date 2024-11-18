@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  name       String
+  email      String   @unique
+  password   String
+  role       String
+  account    Account  @relation(fields: [account_id], references: [id])
+  account_id String
+
+  @@map("users")
+}
+
+model Account {
+  id                String      @id @default(uuid())
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @default(now())
+  name              String
+  type              String // e.g., 'personal', 'business', 'enterprise'
+  status            String      @default("active") // e.g., 'active', 'suspended', 'cancelled'
+  subscription_tier String      @default("free") // e.g., 'free', 'pro', 'enterprise'
+  metadata          Json?
+  users             User[]
+  companies         Company[]
+  jobs              Job[]
+  applicants        Applicant[]
+  interviews        Interview[]
+
+  @@map("accounts")
+}
+
+model Company {
+  id           String      @id @default(uuid())
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @default(now())
+  account      Account     @relation(fields: [account_id], references: [id])
+  account_id   String
+  name         String
+  headquarters String
+  industry     String
+  size         Int
+  website      String
+  date_founded DateTime
+  interviews   Interview[]
+
+  @@map("companies")
+}
+
+model Job {
+  id         Int         @id @default(autoincrement())
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(now())
+  account    Account     @relation(fields: [account_id], references: [id])
+  account_id String
+  position   String
+  role       String
+  type       String // full time, contract, etc.
+  metadata   Json? // Changed from string to Json for better structure
+  interviews Interview[]
+
+  @@map("jobs")
+}
+
+model Applicant {
+  id         Int         @id @default(autoincrement())
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(now())
+  account    Account     @relation(fields: [account_id], references: [id])
+  account_id String
+  first      String
+  last       String
+  email      String      @unique
+  phone      String
+  metadata   Json? // Changed from string to Json for better structure
+  interviews Interview[]
+
+  @@map("applicants")
+}
+
+model Interview {
+  id                    Int               @id @default(autoincrement())
+  created_at            DateTime          @default(now())
+  updated_at            DateTime          @default(now())
+  account               Account           @relation(fields: [account_id], references: [id])
+  account_id            String
+  company               Company           @relation(fields: [company_id], references: [id])
+  company_id            String
+  job                   Job               @relation(fields: [job_id], references: [id])
+  job_id                Int
+  applicant             Applicant         @relation(fields: [applicant_id], references: [id])
+  applicant_id          Int
+  duration              Int // in minutes
+  max_applicants        Int
+  interviewer_style     String
+  response_depth        String
+  bias_migitation_level String
+  topics                String[]          @default([])
+  allow_tangents        Boolean           @default(false)
+  status                String
+  access                InterviewAccess[]
+
+  @@map("interviews")
+}
+
+model InterviewAccess {
+  id           Int       @id @default(autoincrement())
+  created_at   DateTime  @default(now())
+  interview    Interview @relation(fields: [interview_id], references: [id])
+  interview_id Int
+  access_code  String    @unique
+  pin          String
+  expiration   DateTime
+
+  @@map("interview_access")
+}

@@ -2,7 +2,7 @@
 'use server'
 import { sql } from '@vercel/postgres';
 import { getCompanyId } from '@/auth';
-import { FormattedInterviewsTable, FormattedParticipantsTable } from '@/app/lib/definitions';
+import { FormattedInterviewsTable, FormattedApplicantsTable } from '@/app/lib/definitions';
 
 const ITEMS_PER_PAGE = 10;
 

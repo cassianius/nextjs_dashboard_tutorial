@@ -82,7 +82,7 @@ export default function HelpDocsPage() {
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">Friendly</h3>
-                <p>Best for creating a comfortable environment where participants feel at ease sharing personal experiences and opinions. The AI interviewer uses casual language and empathetic responses.</p>
+                <p>Best for creating a comfortable environment where applicants feel at ease sharing personal experiences and opinions. The AI interviewer uses casual language and empathetic responses.</p>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">Formal</h3>
@@ -102,7 +102,7 @@ export default function HelpDocsPage() {
               <li>Use probing questions to explore specific aspects of responses</li>
               <li>Avoid leading questions that might bias responses</li>
               <li>Include a mix of experience-based and opinion-based questions</li>
-              <li>Consider the participant's technical knowledge level when formulating questions</li>
+              <li>Consider the applicant's technical knowledge level when formulating questions</li>
             </ul>
           </section>
         </div>

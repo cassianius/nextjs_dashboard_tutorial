@@ -1,7 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
-// import { deleteParticipant } from '@/app/lib/actions';
+// import { deleteApplicant } from '@/app/lib/actions';
 
 export function AddInterview() {
   return (
@@ -26,10 +26,10 @@ export function UpdateInterview({ id }: { id: string }) {
   );
 }
 
-// export function DeleteParticipant({ id }: { id: string }) {
-//   const deleteParticipantWithId = deleteParticipant.bind(null, id)
+// export function DeleteApplicant({ id }: { id: string }) {
+//   const deleteApplicantWithId = deleteApplicant.bind(null, id)
 //   return (
-//     <form action={deleteParticipantWithId} >
+//     <form action={deleteApplicantWithId} >
 //       <button className="rounded-md border p-2 hover:bg-gray-100">
 //         <span className="sr-only">Delete</span>
 //         <TrashIcon className="w-5" />

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
 import { JobDetailsStep } from './JobDetailsStep';
-import { CandidateStep } from './CandidateStep';
+import { ApplicantStep } from './ApplicantStep';
 import { QuestionsStep } from './QuestionsStep';
 import { PreviewStep } from './PreviewStep';
 import { PublishStep } from './PublishStep';
@@ -21,7 +21,7 @@ const MainWizard = () => {
         },
         {
             title: "Step 2 of 5",
-            component: () => <CandidateStep />
+            component: () => <ApplicantStep />
         },
         {
             title: "Step 3 of 5",

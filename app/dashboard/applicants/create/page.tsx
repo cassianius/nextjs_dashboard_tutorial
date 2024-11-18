@@ -1,7 +1,7 @@
 import Form from '@/app/ui/invoices/create-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchCustomers } from '@/app/lib/data';
-import AddParticipantForm from '@/app/ui/participants/new_participant_form';
+import AddApplicantForm from '@/app/ui/applicants/new_applicant_form';
  
 export default async function Page() {
 //   const customers = await fetchCustomers();
@@ -10,15 +10,15 @@ export default async function Page() {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Participants', href: '/dashboard/participants' },
+          { label: 'Applicants', href: '/dashboard/applicants' },
           {
-            label: 'Add Participant',
-            href: '/dashboard/participants/create',
+            label: 'Add Applicant',
+            href: '/dashboard/applicants/create',
             active: true,
           },
         ]}
       />
-      <AddParticipantForm/>
+      <AddApplicantForm/>
     </main>
   );
 }

@@ -3,9 +3,9 @@
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { Participant, Interview } from '@/app/lib/definitions';
+import { Candidate, Interview } from '@/app/lib/definitions';
 
-const ParticipantSchema = z.object({
+const CandidateSchema = z.object({
   first: z.string().min(1, 'First name is required'),
   last: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email address'),
@@ -13,7 +13,7 @@ const ParticipantSchema = z.object({
   access_code: z.string().min(1, 'Access code is required')
 });
 
-type ParticipantRow = {
+type CandidateRow = {
   id: number;
   company_id: string;
   first: string;
@@ -23,16 +23,16 @@ type ParticipantRow = {
   image_url: string;
 };
 
-export async function createParticipant(
+export async function createCandidate(
   formData: FormData,
 ): Promise<{ 
   success?: boolean;
   error?: string;
-  participant?: Participant;
+  candidate?: Candidate;
 }> {
   try {
     // 1. Validate form data
-    const validatedFields = ParticipantSchema.parse({
+    const validatedFields = CandidateSchema.parse({
       first: formData.get('first'),
       last: formData.get('last'),
       email: formData.get('email'),
@@ -42,7 +42,7 @@ export async function createParticipant(
 
     // 2. First, verify the interview exists and is published
     const { rows: interviewRows } = await sql`
-      SELECT id, company_id, participant_ids, status
+      SELECT id, company_id, candidate_ids, status
       FROM interviews
       WHERE access_code_signup = ${validatedFields.access_code}
       AND status = 'published'
@@ -57,24 +57,24 @@ export async function createParticipant(
 
     const interview = interviewRows[0];
 
-    // 3. Check if participant already exists for this company
-    const { rows: existingParticipants } = await sql<ParticipantRow>`
+    // 3. Check if candidate already exists for this company
+    const { rows: existingCandidates } = await sql<CandidateRow>`
       SELECT id, company_id, first, last, email, phone, image_url
-      FROM participants
+      FROM candidates
       WHERE email = ${validatedFields.email}
       AND company_id = ${interview.company_id}
       LIMIT 1
     `;
 
-    let participant: Participant;
+    let candidate: Candidate;
 
-    if (existingParticipants.length > 0) {
-      // Participant exists
-      participant = existingParticipants[0];
+    if (existingCandidates.length > 0) {
+      // Candidate exists
+      candidate = existingCandidates[0];
     } else {
-      // Create new participant
-      const { rows } = await sql<ParticipantRow>`
-        INSERT INTO participants (
+      // Create new candidate
+      const { rows } = await sql<CandidateRow>`
+        INSERT INTO candidates (
           company_id,
           first,
           last,
@@ -91,16 +91,16 @@ export async function createParticipant(
         )
         RETURNING id, company_id, first, last, email, phone, image_url
       `;
-      participant = rows[0];
+      candidate = rows[0];
     }
 
-    // 4. Check if participant is already registered for this interview
-    const participantIds = interview.participant_ids || [];
-    if (!participantIds.includes(participant.id)) {
-      // Add participant to the interview
+    // 4. Check if candidate is already registered for this interview
+    const candidateIds = interview.candidate_ids || [];
+    if (!candidateIds.includes(candidate.id)) {
+      // Add candidate to the interview
       await sql`
         UPDATE interviews
-        SET participant_ids = array_append(participant_ids, ${participant.id})
+        SET candidate_ids = array_append(candidate_ids, ${candidate.id})
         WHERE id = ${interview.id}
       `;
     }
@@ -108,7 +108,7 @@ export async function createParticipant(
     revalidatePath('/registration');
     return {
       success: true,
-      participant
+      candidate
     };
 
   } catch (error) {
@@ -118,9 +118,9 @@ export async function createParticipant(
       };
     }
 
-    console.error('Error creating participant:', error);
+    console.error('Error creating candidate:', error);
     return {
-      error: 'Failed to register participant. Please try again.'
+      error: 'Failed to register candidate. Please try again.'
     };
   }
 }

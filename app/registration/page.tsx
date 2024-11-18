@@ -2,7 +2,7 @@
 import { notFound } from 'next/navigation';
 import AcmeLogo from '@/app/ui/acme-logo';
 import registrationForm from '@/app/ui/registration/registration-form';
-import { fetchInterviewById } from '../lib/actions/fetchInterviewById';
+import { fetchInterviewById } from '../lib/actions/fetch/fetchInterviewById';
 import { Metadata } from 'next';
 import RegistrationForm from '@/app/ui/registration/registration-form';
 

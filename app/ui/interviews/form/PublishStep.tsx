@@ -28,7 +28,7 @@ export const PublishStep = () => {
           <textarea
             rows={4}
             className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
-            defaultValue={`Dear [Candidate],
+            defaultValue={`Dear [Applicant],
 
 Please complete your phone interview by calling +1 (555) 0123-4567 and entering access code: 1234
 

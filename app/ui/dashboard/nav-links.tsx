@@ -13,7 +13,7 @@ import { usePathname } from 'next/navigation';
 const links = [
   { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
   { name: 'Interviews', href: '/dashboard/interviews', icon: ClipboardDocumentIcon },
-  { name: 'Participants', href: '/dashboard/participants', icon: UserGroupIcon },
+  { name: 'Applicants', href: '/dashboard/applicants', icon: UserGroupIcon },
   { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },
   { name: 'Help', href: '/dashboard/help', icon: QuestionMarkCircleIcon },
 ];
