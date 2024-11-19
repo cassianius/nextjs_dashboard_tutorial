@@ -11,7 +11,8 @@ model User {
   id         String   @id @default(uuid())
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  name       String
+  first      String
+  last       String
   email      String   @unique
   password   String
   role       String
@@ -25,7 +26,6 @@ model Account {
   id                String      @id @default(uuid())
   created_at        DateTime    @default(now())
   updated_at        DateTime    @default(now())
-  name              String
   type              String // e.g., 'personal', 'business', 'enterprise'
   status            String      @default("active") // e.g., 'active', 'suspended', 'cancelled'
   subscription_tier String      @default("free") // e.g., 'free', 'pro', 'enterprise'
