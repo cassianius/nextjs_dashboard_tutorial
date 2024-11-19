@@ -36,7 +36,7 @@ export default function ForgotPasswordForm() {
         <h1 className={`${lusitana.className} mb-3 text-white text-2xl`}>
           Reset your password
         </h1>
-        <p className="text-sm text-gray-400 mb-6">
+        <p className="text-xs mt-4 text-white mb-6">
           Enter your email address below and we'll send you instructions to reset your password.
         </p>
         <div className="w-full">

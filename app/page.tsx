@@ -18,7 +18,7 @@ export default function Page() {
           <div className={`${lusitana.className} text-xl text-white md:text-2xl md:leading-normal`}>
             <p><strong>Welcome to Convocast.</strong></p>
             <br />
-            <p>The world's first audio-only AI interview tool for unprecedented insights.</p>
+            <p>The AI phone screen tool for finding exceptional candidates.</p>
           </div>
           <br />
           <Link
