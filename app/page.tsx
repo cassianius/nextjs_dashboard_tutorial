@@ -29,7 +29,7 @@ export default function Page() {
           </Link>
           <p className="mt-4 text-sm text-gray-400">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-blue-500 hover:underline">
+            <Link href="/signup-user" className="text-blue-500 hover:underline">
               Sign up
             </Link>
           </p>
