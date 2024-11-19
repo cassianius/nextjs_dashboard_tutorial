@@ -4,6 +4,7 @@ import {
   UserCircleIcon,
   QuestionMarkCircleIcon,
   ClipboardDocumentIcon,
+  BriefcaseIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
@@ -14,6 +15,7 @@ const links = [
   { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
   { name: 'Interviews', href: '/dashboard/interviews', icon: ClipboardDocumentIcon },
   { name: 'Applicants', href: '/dashboard/applicants', icon: UserGroupIcon },
+  { name: 'Companies', href: '/dashboard/applicants', icon: BriefcaseIcon },
   { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },
   { name: 'Help', href: '/dashboard/help', icon: QuestionMarkCircleIcon },
 ];
