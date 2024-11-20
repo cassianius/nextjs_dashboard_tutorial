@@ -1,5 +1,5 @@
-import { FormattedApplicantsTable } from '@/app/lib/definitions';
-import { fetchApplicants } from '@/app/lib/actions/fetchApplicants';
+// import { FormattedApplicantsTable } from '@/app/lib/definitions';
+// import { fetchApplicants } from '@/app/lib/actions/fetchApplicants';
 import Link from 'next/link';
 
 export default async function ApplicantsTable({
@@ -9,14 +9,14 @@ export default async function ApplicantsTable({
   query: string;
   currentPage: number;
 }) {
-  const applicants = await fetchApplicants(query, currentPage) as FormattedApplicantsTable[];
+  // const applicants = await fetchApplicants(query, currentPage) as FormattedApplicantsTable[];
 
   return (
     <div className="bg-gray-800 p-6 rounded-xl shadow-lg mt-8">
 
       {/* Mobile view */}
       <div className="md:hidden">
-        {applicants?.map((applicant) => (
+        {/* {applicants?.map((applicant) => (
           <div
             key={applicant.id}
             className="mb-4 p-4 bg-gray-700 rounded-lg"
@@ -39,7 +39,7 @@ export default async function ApplicantsTable({
               </div>
             </div>
           </div>
-        ))}
+        ))} */}
       </div>
 
       {/* Desktop view */}
@@ -65,7 +65,7 @@ export default async function ApplicantsTable({
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
-            {applicants?.map((applicant) => (
+            {/* {applicants?.map((applicant) => (
               <tr key={applicant.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                   {applicant.first}
@@ -90,7 +90,7 @@ export default async function ApplicantsTable({
                   </div>
                 </td>
               </tr>
-            ))}
+            ))} */}
           </tbody>
         </table>
       </div>

@@ -1,4 +1,4 @@
-import Pagination from "@/app/ui/invoices/pagination";
+import Pagination from "@/app/ui/shared/pagination";
 import Search from "@/app/ui/search";
 import Table from "@/app/ui/interviews/list/table";
 import { AddInterview } from "@/app/ui/interviews/buttons";

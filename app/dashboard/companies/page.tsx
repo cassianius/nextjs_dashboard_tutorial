@@ -1,5 +1,5 @@
 // app/dashboard/companies/page.tsx
-import Pagination from "@/app/ui/invoices/pagination";
+import Pagination from "@/app/ui/shared/pagination";
 import Search from "@/app/ui/search";
 import Table from "@/app/ui/interviews/list/table";
 import { AddCompany } from "@/app/ui/companies/buttons";
