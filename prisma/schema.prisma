@@ -60,7 +60,7 @@ model Company {
   name         String
   headquarters String
   industry     String
-  size         Int
+  size         String
   website      String
   date_founded DateTime
   interviews   Interview[]

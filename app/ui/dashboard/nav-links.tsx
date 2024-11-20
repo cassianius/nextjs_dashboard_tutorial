@@ -5,7 +5,8 @@ import {
   QuestionMarkCircleIcon,
   ClipboardDocumentIcon,
   BriefcaseIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  BuildingOfficeIcon
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -14,8 +15,9 @@ import { usePathname } from 'next/navigation';
 const links = [
   { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
   { name: 'Interviews', href: '/dashboard/interviews', icon: ClipboardDocumentIcon },
+  { name: 'Job Postings', href: '/dashboard/job-postings', icon: BriefcaseIcon },
   { name: 'Applicants', href: '/dashboard/applicants', icon: UserGroupIcon },
-  { name: 'Companies', href: '/dashboard/applicants', icon: BriefcaseIcon },
+  { name: 'Companies', href: '/dashboard/companies', icon: BuildingOfficeIcon },
   { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },
   { name: 'Help', href: '/dashboard/help', icon: QuestionMarkCircleIcon },
 ];

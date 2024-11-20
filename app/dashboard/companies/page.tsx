@@ -1,10 +1,9 @@
+// app/dashboard/companies/page.tsx
 import Pagination from "@/app/ui/invoices/pagination";
 import Search from "@/app/ui/search";
 import Table from "@/app/ui/interviews/list/table";
 import { AddCompany } from "@/app/ui/companies/buttons";
 import { lusitana } from "@/app/ui/fonts";
-// import { fetchInterviewPages } from '@/app/lib/actions/fetch/fetchInterviews';
-import { Suspense } from 'react';
 
 export default async function Page({
   searchParams,
@@ -16,7 +15,6 @@ export default async function Page({
 }) {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
-  // const totalPages = await fetchInterviewPages(query);
   const totalPages = 1; //temp
 
   return (
@@ -26,11 +24,9 @@ export default async function Page({
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search companies..." />
-        {/* <AddInterview /> */}
+        <AddCompany />
       </div>
-      {/* <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}> */}
-        <Table query={query} currentPage={currentPage} />
-      {/* </Suspense> */}
+      <Table query={query} currentPage={currentPage} />
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>
