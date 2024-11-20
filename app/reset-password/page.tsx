@@ -1,5 +1,5 @@
 import AcmeLogo from '@/app/ui/acme-logo';
-import ResetPasswordForm from '../ui/reset-password-form'
+import ResetPasswordForm from '@/app/ui/reset-password-form';
 
 export default function ResetPasswordPage() {
   return (

@@ -30,7 +30,7 @@ export default function SignUpForm() {
       // Store IDs if needed for the next step
       sessionStorage.setItem('temp_user_id', state.userId!);
       sessionStorage.setItem('temp_account_id', state.accountId!);
-      router.push('/signup/company-profile');
+      router.push('/dashboard/interviews');
     }
   }, [state, router]);
 

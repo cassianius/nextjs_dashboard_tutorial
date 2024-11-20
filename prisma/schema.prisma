@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model PasswordReset {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+  used      Boolean  @default(false)
+
+  @@index([email])
+  @@index([token])
+}
+
 model User {
   id         String   @id @default(uuid())
   created_at DateTime @default(now())
