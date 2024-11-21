@@ -13,7 +13,7 @@ export default function GenericTable({
     actions: Action[];
   }) {
     return (
-      <div className="bg-gray-800 p-6 rounded-xl shadow-lg mt-8">
+      <div className="bg-gray-800 pt-6 pl-6 pr-6 rounded-xl shadow-lg mt-8">
         {/* Mobile view */}
         <div className="md:hidden">
           {items?.map((item) => (

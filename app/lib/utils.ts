@@ -35,27 +35,26 @@ export const formatDateToLocal = (
 // };
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
-  // If the total number of pages is 7 or less,
-  // display all pages without any ellipsis.
+  // If total pages is 7 or less
+  // [1, 2, 3, 4, 5, 6, 7]
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  // If the current page is among the first 3 pages,
-  // show the first 3, an ellipsis, and the last 2 pages.
+  // If current page is among the first 3 pages
+  // [1, 2, 3, "...", 15, 16, 17]
   if (currentPage <= 3) {
-    return [1, 2, 3, '...', totalPages - 1, totalPages];
+    return [1, 2, 3, '...', totalPages - 2, totalPages - 1, totalPages];
   }
 
-  // If the current page is among the last 3 pages,
-  // show the first 2, an ellipsis, and the last 3 pages.
+  // If current page is among the last 3 pages
+  // [1, 2, 3, "...", 15, 16, 17]
   if (currentPage >= totalPages - 2) {
-    return [1, 2, '...', totalPages - 2, totalPages - 1, totalPages];
+    return [1, 2, 3, '...', totalPages - 2, totalPages - 1, totalPages];
   }
 
-  // If the current page is somewhere in the middle,
-  // show the first page, an ellipsis, the current page and its neighbors,
-  // another ellipsis, and the last page.
+  // If current page is somewhere in the middle
+  // [1, "...", 13, 14, 15, "...", 17]
   return [
     1,
     '...',
@@ -66,6 +65,7 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     totalPages,
   ];
 };
+
 
 
 // Shared utility functions

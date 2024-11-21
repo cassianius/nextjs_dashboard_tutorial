@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      animation: {
+        'spin': 'spin 1s linear infinite',
+      },
       gridTemplateColumns: {
         '13': 'repeat(13, minmax(0, 1fr))',
       },
@@ -20,6 +23,10 @@ const config: Config = {
       },
     },
     keyframes: {
+      spin: {
+        '0%': { transform: 'rotate(0deg)' },
+        '100%': { transform: 'rotate(360deg)' },
+      },
       shimmer: {
         '100%': {
           transform: 'translateX(100%)',

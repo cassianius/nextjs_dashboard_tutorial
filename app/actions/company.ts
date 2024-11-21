@@ -1,7 +1,7 @@
 // app/actions/company.ts
 'use server';
 
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 
@@ -142,5 +142,119 @@ export async function createCompany(prevState: FormState | null, formData: FormD
         _form: ['Something went wrong. Please try again.'],
       },
     };
+  }
+}
+import { auth } from '@/auth';
+import { Company } from '@prisma/client';
+
+export type CompaniesTableResponse = {
+  data: Pick<Company, 'id' | 'name' | 'industry' | 'headquarters'>[];
+  metadata: {
+    totalPages: number;
+  };
+};
+
+export async function fetchCompanies(
+  query: string = '',
+  page: number = 1,
+): Promise<CompaniesTableResponse> {
+  try {
+    // Get session for authentication
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error('Not authenticated');
+    }
+
+    // Get account_id from cookies
+    const cookieStore = cookies();
+    const account_id = cookieStore.get('account_id')?.value;
+
+    if (!account_id) {
+      throw new Error('No account found');
+    }
+
+    const ITEMS_PER_PAGE = 10;
+    const offset = (page - 1) * ITEMS_PER_PAGE;
+
+    // Create properly typed where clause
+    const where: Prisma.CompanyWhereInput = {
+      account_id,
+      OR: query ? [
+        { name: { contains: query, mode: 'insensitive' } },
+        { industry: { contains: query, mode: 'insensitive' } },
+        { headquarters: { contains: query, mode: 'insensitive' } },
+      ] : undefined,
+    };
+
+    // Fetch data and count in parallel
+    const [companies, totalItems] = await Promise.all([
+      prisma.company.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          industry: true,
+          headquarters: true,
+        },
+        orderBy: {
+          name: 'asc',
+        },
+        take: ITEMS_PER_PAGE,
+        skip: offset,
+      }),
+      prisma.company.count({ where })
+    ]);
+
+    return {
+      data: companies,
+      metadata: {
+        totalPages: Math.ceil(totalItems / ITEMS_PER_PAGE),
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching companies:', error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch companies: ${error.message}`);
+    }
+    throw new Error('Failed to fetch companies.');
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+export async function fetchCompanyPages(
+  query: string = '',
+): Promise<number> {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error('Not authenticated');
+    }
+
+    const cookieStore = cookies();
+    const account_id = cookieStore.get('account_id')?.value;
+
+    if (!account_id) {
+      throw new Error('No account found');
+    }
+
+    const ITEMS_PER_PAGE = 10;
+
+    // Create properly typed where clause
+    const where: Prisma.CompanyWhereInput = {
+      account_id,
+      OR: query ? [
+        { name: { contains: query, mode: 'insensitive' } },
+        { industry: { contains: query, mode: 'insensitive' } },
+        { headquarters: { contains: query, mode: 'insensitive' } },
+      ] : undefined,
+    };
+
+    const totalItems = await prisma.company.count({ where });
+    
+    return Math.ceil(totalItems / ITEMS_PER_PAGE);
+  } catch (error) {
+    console.error('Error fetching company pages:', error);
+    throw new Error('Failed to fetch company pages.');
   }
 }
