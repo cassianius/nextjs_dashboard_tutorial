@@ -9,28 +9,24 @@ const prisma = new PrismaClient();
 
 // Validation schema
 const CompanySchema = z.object({
-    name: z.string()
-      .min(2, 'Company name must be at least 2 characters')
-      .max(100, 'Company name must be less than 100 characters'),
-    headquarters: z.string()
-      .min(2, 'Headquarters location must be at least 2 characters')
-      .max(100, 'Headquarters location must be less than 100 characters'),
-    industry: z.string()
-      .min(2, 'Industry must be selected'),
-    size: z.string()
-      .min(1, 'Company size must be selected')
-      .refine((val) => ['1-10', '10-100', '100-1,000', '1,000-10,000', '10,000+'].includes(val), {
-        message: 'Please select a valid company size',
-      }),
-    website: z.string()
-      .url('Please enter a valid URL')
-      .max(200, 'Website URL must be less than 200 characters'),
-    date_founded: z.string()
-      .refine((date) => !isNaN(Date.parse(date)), {
-        message: 'Please enter a valid date',
-      })
-  });
-  
+  name: z.string()
+    .min(2, 'Company name must be at least 2 characters')
+    .max(100, 'Company name must be less than 100 characters'),
+  headquarters: z.string()
+    .min(2, 'Headquarters location must be at least 2 characters')
+    .max(100, 'Headquarters location must be less than 100 characters'),
+  industry: z.string()
+    .min(2, 'Industry must be selected'),
+  size: z.string()
+    .min(1, 'Company size must be selected')
+    .refine((val) => ['1-10', '10-100', '100-1,000', '1,000-10,000', '10,000+'].includes(val), {
+      message: 'Please select a valid company size',
+    }),
+  website: z.string()
+    .url('Please enter a valid URL')
+    .max(200, 'Website URL must be less than 200 characters'),
+});
+
 type FormState = {
   message?: string | null;
   success?: boolean;
@@ -41,7 +37,6 @@ type FormState = {
     industry?: string[];
     size?: string[];
     website?: string[];
-    date_founded?: string[];
     _form?: string[];
   };
 };
@@ -49,7 +44,7 @@ type FormState = {
 export async function createCompany(prevState: FormState | null, formData: FormData): Promise<FormState> {
   try {
     console.log('Starting company creation process...');
-    
+
     // Get account_id from cookies
     const cookieStore = cookies();
     const accountId = cookieStore.get('account_id')?.value;
@@ -69,7 +64,6 @@ export async function createCompany(prevState: FormState | null, formData: FormD
       industry: formData.get('industry')?.toString() || '',
       size: formData.get('size')?.toString() || '',
       website: formData.get('website')?.toString() || '',
-      date_founded: formData.get('date_founded')?.toString() || '',
     };
 
     console.log('Raw form data:', rawFormData);
@@ -103,9 +97,8 @@ export async function createCompany(prevState: FormState | null, formData: FormD
         name: validatedFields.name,
         headquarters: validatedFields.headquarters,
         industry: validatedFields.industry,
-        size: validatedFields.size, // Now safely converted to number by Zod
+        size: validatedFields.size, 
         website: validatedFields.website,
-        date_founded: new Date(validatedFields.date_founded),
         account_id: accountId,
       },
     });
@@ -195,6 +188,8 @@ export async function fetchCompanies(
           name: true,
           industry: true,
           headquarters: true,
+          size: true,
+          website: true
         },
         orderBy: {
           name: 'asc',
@@ -247,11 +242,14 @@ export async function fetchCompanyPages(
         { name: { contains: query, mode: 'insensitive' } },
         { industry: { contains: query, mode: 'insensitive' } },
         { headquarters: { contains: query, mode: 'insensitive' } },
+        { size: { contains: query, mode: 'insensitive' } },
+        { website: { contains: query, mode: 'insensitive' } },
+
       ] : undefined,
     };
 
     const totalItems = await prisma.company.count({ where });
-    
+
     return Math.ceil(totalItems / ITEMS_PER_PAGE);
   } catch (error) {
     console.error('Error fetching company pages:', error);
@@ -275,7 +273,7 @@ export async function deleteCompany(
 ): Promise<DeleteFormState> {
   try {
     const companyId = formData.get('companyId')?.toString();
-    
+
     if (!companyId) {
       return {
         message: null,
@@ -333,6 +331,135 @@ export async function deleteCompany(
       message: null,
       errors: {
         _form: ['Failed to delete company'],
+      },
+    };
+  }
+}
+
+export async function fetchCompanyById(id: string): Promise<Company | null> {
+  try {
+    const cookieStore = cookies();
+    const accountId = cookieStore.get('account_id')?.value;
+
+    if (!accountId) {
+      throw new Error('Authentication required');
+    }
+
+    const company = await prisma.company.findFirst({
+      where: {
+        id,
+        account_id: accountId,
+      },
+    });
+
+    return company;
+  } catch (error) {
+    console.error('Error fetching company:', error);
+    return null;
+  }
+}
+
+export async function updateCompany(
+  id: string,
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  try {
+    const cookieStore = cookies();
+    const accountId = cookieStore.get('account_id')?.value;
+
+    if (!accountId) {
+      return {
+        errors: {
+          _form: ['Authentication required'],
+        },
+      };
+    }
+
+    // Get and validate form data
+    const rawFormData = {
+      name: formData.get('name')?.toString() || '',
+      headquarters: formData.get('headquarters')?.toString() || '',
+      industry: formData.get('industry')?.toString() || '',
+      size: formData.get('size')?.toString() || '',
+      website: formData.get('website')?.toString() || '',
+    };
+
+    // Validate form data
+    const validatedFields = CompanySchema.parse(rawFormData);
+
+    // Check if company exists and belongs to account
+    const existingCompany = await prisma.company.findFirst({
+      where: {
+        id,
+        account_id: accountId,
+      },
+    });
+
+    if (!existingCompany) {
+      return {
+        errors: {
+          _form: ['Company not found or access denied'],
+        },
+      };
+    }
+
+    // Check if new name conflicts with another company (excluding current company)
+    const nameConflict = await prisma.company.findFirst({
+      where: {
+        account_id: accountId,
+        name: validatedFields.name,
+        id: { not: id },
+      },
+    });
+
+    if (nameConflict) {
+      return {
+        errors: {
+          _form: ['A company with this name already exists in your account'],
+        },
+      };
+    }
+
+    // Update company
+    const updatedCompany = await prisma.company.update({
+      where: { id },
+      data: {
+        name: validatedFields.name,
+        headquarters: validatedFields.headquarters,
+        industry: validatedFields.industry,
+        size: validatedFields.size,
+        website: validatedFields.website,
+        updated_at: new Date(),
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Company updated successfully!',
+    };
+
+  } catch (error) {
+    console.error('Company update error:', error);
+
+    if (error instanceof z.ZodError) {
+      const fieldErrors: Record<string, string[]> = {};
+      error.errors.forEach((err) => {
+        const field = err.path[0] as string;
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = [];
+        }
+        fieldErrors[field].push(err.message);
+      });
+
+      return {
+        errors: fieldErrors as FormState['errors']
+      };
+    }
+
+    return {
+      errors: {
+        _form: ['Something went wrong. Please try again.'],
       },
     };
   }

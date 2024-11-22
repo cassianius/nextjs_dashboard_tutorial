@@ -62,7 +62,6 @@ model Company {
   industry     String
   size         String
   website      String
-  date_founded DateTime
   interviews   Interview[]
 
   @@map("companies")
