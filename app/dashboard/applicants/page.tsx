@@ -5,6 +5,7 @@ import { AddApplicant } from "@/app/ui/applicants/buttons";
 import { lusitana } from "@/app/ui/fonts";
 // import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
+import { TableSkeleton } from "@/app/ui/skeletons";
 
 export default async function Page({
   searchParams,
@@ -27,10 +28,9 @@ export default async function Page({
         <Search placeholder="Search applicants..." />
         <AddApplicant />
       </div>
-      {/* <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}> */}
+      <Suspense key={query + currentPage} fallback={<TableSkeleton />}>
        <Table query={query} currentPage={currentPage} /> 
-       {/* <Table/> */}
-      {/* </Suspense> */}
+      </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={2} />
       </div>

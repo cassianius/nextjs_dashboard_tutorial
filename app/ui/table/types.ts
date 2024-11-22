@@ -3,11 +3,11 @@ import { ReactNode } from 'react';
 export type Column = {
   key: string;
   label: string;
-  render?: (value: any) => ReactNode;
-}
+  render?: (value: any) => React.ReactNode;
+};
 
 export type Action = {
   label: string;
-  onClick: (id: number) => void;
+  onClick: (string: string) => void;
   showIf?: (item: any) => boolean;
-}
+};

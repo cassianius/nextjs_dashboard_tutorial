@@ -16,7 +16,7 @@ export const TableRow = ({
           {column.render ? column.render(item[column.key]) : item[column.key]}
         </td>
       ))}
-      <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+      <td className="px-10 py-4 whitespace-nowrap text-left text-sm font-medium">
         <RowMenu actions={actions} item={item} />
       </td>
     </tr>

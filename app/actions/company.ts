@@ -258,3 +258,82 @@ export async function fetchCompanyPages(
     throw new Error('Failed to fetch company pages.');
   }
 }
+
+// Add this to company.ts
+
+type DeleteFormState = {
+  message: string | null;
+  success?: boolean;
+  errors?: {
+    _form?: string[];
+  };
+};
+
+export async function deleteCompany(
+  prevState: DeleteFormState,
+  formData: FormData
+): Promise<DeleteFormState> {
+  try {
+    const companyId = formData.get('companyId')?.toString();
+    
+    if (!companyId) {
+      return {
+        message: null,
+        errors: {
+          _form: ['Company ID is required'],
+        },
+      };
+    }
+
+    // Get account_id from cookies for security verification
+    const cookieStore = cookies();
+    const accountId = cookieStore.get('account_id')?.value;
+
+    if (!accountId) {
+      return {
+        message: null,
+        errors: {
+          _form: ['Authentication required'],
+        },
+      };
+    }
+
+    // Verify the company belongs to the account before deletion
+    const company = await prisma.company.findFirst({
+      where: {
+        id: companyId,
+        account_id: accountId,
+      },
+    });
+
+    if (!company) {
+      return {
+        message: null,
+        errors: {
+          _form: ['Company not found or access denied'],
+        },
+      };
+    }
+
+    // Delete the company
+    await prisma.company.delete({
+      where: {
+        id: companyId,
+      },
+    });
+
+    return {
+      message: 'Company deleted successfully',
+      success: true
+    };
+
+  } catch (error) {
+    console.error('Error deleting company:', error);
+    return {
+      message: null,
+      errors: {
+        _form: ['Failed to delete company'],
+      },
+    };
+  }
+}
