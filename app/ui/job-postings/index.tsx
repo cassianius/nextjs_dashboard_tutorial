@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { fetchCompanies } from '@/app/actions/company'
-import CompaniesTable from './table';
+import { fetchJobPages, fetchJobs } from '@/app/actions/job-posting'
+import JobPostingTable from './table';
 import { TableSkeleton } from '@/app/ui/skeletons';
 
 export default async function Table({
@@ -10,16 +10,16 @@ export default async function Table({
   query: string;
   currentPage: number;
 }) {
-  const { data: companies, metadata } = await fetchCompanies(query, currentPage);
+  const { data: jobs } = await fetchJobs(query, currentPage);
 
   return (
     <div>
       <Suspense fallback={<TableSkeleton />}>
-        <CompaniesTable companies={companies} />
+        <JobPostingTable jobPostings={jobs} />
       </Suspense>
-      {companies.length === 0 && (
+      {jobs.length === 0 && (
         <div className="text-center py-6">
-          <p className="text-gray-400">No companies found</p>
+          <p className="text-gray-400">No jobs found</p>
         </div>
       )}
     </div>

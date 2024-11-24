@@ -135,21 +135,88 @@ export async function createJob(prevState: FormState | null, formData: FormData)
 }
 
 export type JobsTableResponse = {
-  data: Array<{
-    id: number;
-    position: string;
-    role: string;
-    type: string;
-  }>;
-  metadata: {
-    totalPages: number;
+    data: Array<Omit<Job, 'metadata'> & { metadata: Prisma.JsonValue }>;
+    metadata: {
+      totalPages: number;
+    };
   };
-};
+  
+  
+  export async function fetchJobs(
+    query: string = '',
+    page: number = 1,
+  ): Promise<JobsTableResponse> {
+    try {
+      // Get session for authentication
+      const session = await auth();
+      if (!session?.user) {
+        throw new Error('Not authenticated');
+      }
+  
+      // Get account_id from cookies
+      const cookieStore = cookies();
+      const account_id = cookieStore.get('account_id')?.value;
+  
+      if (!account_id) {
+        throw new Error('No account found');
+      }
+  
+      const ITEMS_PER_PAGE = 10;
+      const offset = (page - 1) * ITEMS_PER_PAGE;
+  
+      // Create properly typed where clause
+      const where: Prisma.JobWhereInput = {
+        account_id,
+        OR: query ? [
+          { position: { contains: query, mode: 'insensitive' } },
+          { role: { contains: query, mode: 'insensitive' } },
+          { type: { contains: query, mode: 'insensitive' } },
+        ] : undefined,
+      };
+  
+      // Fetch data and count in parallel
+      const [jobs, totalItems] = await Promise.all([
+        prisma.job.findMany({
+          where,
+          select: {
+            id: true,
+            position: true,
+            role: true,
+            type: true,
+            metadata: true,
+            created_at: true,
+            updated_at: true,
+            account_id: true
+          },
+          orderBy: {
+            position: 'asc',
+          },
+          take: ITEMS_PER_PAGE,
+          skip: offset,
+        }),
+        prisma.job.count({ where })
+      ]);
+  
+      return {
+        data: jobs as Array<Omit<Job, 'metadata'> & { metadata: Prisma.JsonValue }>,
+        metadata: {
+          totalPages: Math.ceil(totalItems / ITEMS_PER_PAGE),
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      if (error instanceof Error) {
+        throw new Error(`Failed to fetch jobs: ${error.message}`);
+      }
+      throw new Error('Failed to fetch jobs.');
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
 
-export async function fetchJobs(
-  query: string = '',
-  page: number = 1,
-): Promise<JobsTableResponse> {
+ export async function fetchJobPages(
+query: string = '',
+): Promise<number> {
   try {
     const session = await auth();
     if (!session?.user) {
@@ -164,8 +231,8 @@ export async function fetchJobs(
     }
 
     const ITEMS_PER_PAGE = 10;
-    const offset = (page - 1) * ITEMS_PER_PAGE;
 
+    // Create properly typed where clause
     const where: Prisma.JobWhereInput = {
       account_id,
       OR: query ? [
@@ -175,35 +242,15 @@ export async function fetchJobs(
       ] : undefined,
     };
 
-    const [jobs, totalItems] = await Promise.all([
-      prisma.job.findMany({
-        where,
-        select: {
-          id: true,
-          position: true,
-          role: true,
-          type: true,
-        },
-        orderBy: {
-          created_at: 'desc',
-        },
-        take: ITEMS_PER_PAGE,
-        skip: offset,
-      }),
-      prisma.job.count({ where })
-    ]);
+    const totalItems = await prisma.job.count({ where });
 
-    return {
-      data: jobs,
-      metadata: {
-        totalPages: Math.ceil(totalItems / ITEMS_PER_PAGE),
-      },
-    };
+    return Math.ceil(totalItems / ITEMS_PER_PAGE);
   } catch (error) {
-    console.error('Error fetching jobs:', error);
-    throw new Error('Failed to fetch jobs.');
+    console.error('Error fetching job pages:', error);
+    throw new Error('Failed to fetch job pages.');
   }
 }
+
 
 export async function fetchJobById(id: number): Promise<Job | null> {
   try {

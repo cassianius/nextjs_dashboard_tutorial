@@ -59,7 +59,7 @@ export default function CompanyTable({
   const columns: Column[] = [
     { key: 'name', label: 'Company Name' },
     { key: 'industry', label: 'Industry' },
-    { key: 'headquarters', label: 'Headquarters' }
+    { key: 'headquarters', label: 'Location' }
   ];
 
   const actions: Action[] = [

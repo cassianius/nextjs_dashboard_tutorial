@@ -141,7 +141,7 @@ import { auth } from '@/auth';
 import { Company } from '@prisma/client';
 
 export type CompaniesTableResponse = {
-  data: Pick<Company, 'id' | 'name' | 'industry' | 'headquarters'>[];
+  data: Pick<Company, 'id' | 'name' | 'industry' | 'headquarters' | 'size' | 'website'>[]; // Added size and website
   metadata: {
     totalPages: number;
   };
