@@ -19,12 +19,9 @@ export default async function Page({
   const totalPages = await fetchCompanyPages(query)
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between">
-        <h1 className={`${lusitana.className} text-2xl text-white`}>Companies</h1>
-        <AddCompany />
-      </div>
-      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+      <div className="mt-4 flex items-center justify-between gap-4 md:mt-8">
         <Search placeholder="Search companies..." />
+        <AddCompany />
       </div>
       <Table query={query} currentPage={currentPage} />
       <div className="mt-5 flex w-full justify-center">

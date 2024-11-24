@@ -34,13 +34,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col space-y-6 bg-gray-900 min-h-screen">
-      {/* Header Section */}
-      <div className="flex justify-between items-center">
-        <h1 className={`${lusitana.className} text-2xl text-white`}>Interviews</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-          New Interview
-        </button>
-      </div>
+  
 
       {/* Tab Navigation */}
       <div className="border-b border-gray-700">
