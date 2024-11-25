@@ -1,11 +1,9 @@
-import Pagination from "@/app/ui/shared/pagination";
-import Search from "@/app/ui/search";
-import Table from "@/app/ui/applicants/table";
-import { AddApplicant } from "@/app/ui/applicants/buttons";
+import { fetchApplicantPages } from "@/app/actions/applicant";
+import Table from "@/app/ui/applicants";
 import { lusitana } from "@/app/ui/fonts";
-// import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
-import { Suspense } from "react";
-import { TableSkeleton } from "@/app/ui/skeletons";
+import { AddApplicant } from "@/app/ui/applicants/buttons";
+import Search from "@/app/ui/search";
+import Pagination from "@/app/ui/shared/pagination";
 
 export default async function Page({
   searchParams,
@@ -17,22 +15,19 @@ export default async function Page({
 }) {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
-  // const totalPages = await fetchApplicantsPages(query, currentPage);
+
+  // Use separate function to get total pages
+  const totalPages = await fetchApplicantPages(query);
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between">
-        <h1 className={`${lusitana.className} text-2xl text-white`}>Applicants</h1>
-      </div>
-      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+      <div className="mt-4 flex items-center justify-between gap-4 md:mt-8">
         <Search placeholder="Search applicants..." />
         <AddApplicant />
       </div>
-      <Suspense key={query + currentPage} fallback={<TableSkeleton />}>
-       <Table query={query} currentPage={currentPage} /> 
-      </Suspense>
+      <Table query={query} currentPage={currentPage} />
       <div className="mt-5 flex w-full justify-center">
-        <Pagination totalPages={2} />
+        <Pagination totalPages={totalPages} />
       </div>
     </div>
   );
