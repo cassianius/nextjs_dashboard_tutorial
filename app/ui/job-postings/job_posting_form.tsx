@@ -214,7 +214,7 @@ export default function JobPostingForm({
                     defaultValue={initialData?.metadata?.description}
                     required
                   />
-                  <DocumentTextIcon className="pointer-events-none absolute text-gray-400 left-3 top-[18px] h-[18px] w-[18px] peer-focus:text-white" />
+                  <DocumentTextIcon className="pointer-events-none absolute text-gray-400 left-3 top-[10px] h-[18px] w-[18px] peer-focus:text-white" />
                 </div>
                 {state?.errors?.rawDescription && (
                   <div className="mt-1 text-xs text-red-500">
