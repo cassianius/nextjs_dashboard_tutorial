@@ -631,3 +631,79 @@ export async function fetchPaginatedTopics(
     }
   }
   
+  type DeleteFormState = {
+    message: string | null;
+    success?: boolean;
+    errors?: {
+      _form?: string[];
+    };
+  };
+
+  export async function deleteTopic(
+    prevState: DeleteFormState,
+    formData: FormData
+  ): Promise<DeleteFormState> {
+    try {
+      const topicId = formData.get('id')?.toString();
+  
+      if (!topicId) {
+        return {
+          message: null,
+          errors: {
+            _form: ['Topic ID is required'],
+          },
+        };
+      }
+  
+      const cookieStore = cookies();
+      const accountId = cookieStore.get('account_id')?.value;
+  
+      if (!accountId) {
+        return {
+          message: null,
+          errors: {
+            _form: ['Authentication required'],
+          },
+        };
+      }
+  
+      const topic = await prisma.topic.findFirst({
+        where: {
+          id: topicId,
+          account_id: accountId,
+        },
+      });
+  
+      if (!topic) {
+        return {
+          message: null,
+          errors: {
+            _form: ['Topic not found or access denied'],
+          },
+        };
+      }
+  
+      await prisma.topic.delete({
+        where: {
+          id: topicId,
+        },
+      });
+  
+      return {
+        message: 'Topic deleted successfully',
+        success: true
+      };
+  
+    } catch (error) {
+      console.error('Error deleting topic:', error);
+      return {
+        message: null,
+        errors: {
+          _form: ['Failed to delete topic'],
+        },
+      };
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+  
