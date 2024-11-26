@@ -17,7 +17,7 @@ const links = [
   { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
   { name: 'Interviews', href: '/dashboard/interviews', icon: ClipboardDocumentIcon },
   { name: 'Job Postings', href: '/dashboard/job-postings', icon: BriefcaseIcon },
-  { name: 'Topics', href: '/dashboard/topics', icon: QuestionMarkCircleIcon },
+  { name: 'Question Topics', href: '/dashboard/topics', icon: QuestionMarkCircleIcon },
   { name: 'Applicants', href: '/dashboard/applicants', icon: UserGroupIcon },
   { name: 'Companies', href: '/dashboard/companies', icon: BuildingOfficeIcon },
   { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },

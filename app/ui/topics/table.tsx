@@ -64,7 +64,7 @@ export default function TopicTable({
   const columns: Column[] = [
     {
       key: 'topic',
-      label: 'Topic',
+      label: 'Category',
       render: (value: string) => 
         value.replace(/_/g, ' ').toLowerCase()
           .split(' ')
