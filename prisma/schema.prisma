@@ -35,18 +35,20 @@ model User {
 }
 
 model Account {
-  id                String      @id @default(uuid())
-  created_at        DateTime    @default(now())
-  updated_at        DateTime    @default(now())
+  id                String       @id @default(uuid())
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @default(now())
   type              String // e.g., 'personal', 'business', 'enterprise'
-  status            String      @default("active") // e.g., 'active', 'suspended', 'cancelled'
-  subscription_tier String      @default("free") // e.g., 'free', 'pro', 'enterprise'
+  status            String       @default("active") // e.g., 'active', 'suspended', 'cancelled'
+  subscription_tier String       @default("free") // e.g., 'free', 'pro', 'enterprise'
   metadata          Json?
   users             User[]
   companies         Company[]
   jobs              Job[]
   applicants        Applicant[]
   interviews        Interview[]
+  Topic             Topic[]
+  TopicGroup        TopicGroup[]
 
   @@map("accounts")
 }
@@ -133,4 +135,33 @@ model InterviewAccess {
   expiration   DateTime
 
   @@map("interview_access")
+}
+
+enum InterviewTopic {
+  TECHNICAL_EXPERTISE
+  PROBLEM_SOLVING
+  LEADERSHIP
+  COMMUNICATION
+  PROJECT_EXECUTION
+  DOMAIN_KNOWLEDGE
+  ADAPTABILITY
+  INNOVATION
+}
+
+model Topic {
+  id         String         @id @default(cuid())
+  account    Account        @relation(fields: [account_id], references: [id])
+  account_id String
+  topic      InterviewTopic
+  goal       String
+  probe_level      Int
+  TopicGroup TopicGroup[]
+}
+
+model TopicGroup {
+  id         String  @id @default(cuid())
+  account    Account @relation(fields: [account_id], references: [id])
+  account_id String
+  title      String
+  topics     Topic[]
 }
