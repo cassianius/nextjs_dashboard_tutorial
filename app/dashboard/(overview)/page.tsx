@@ -25,43 +25,10 @@ export default function DashboardPage() {
     { month: 'Apr', interviews: 70, completion: 87 },
   ];
 
-  const tabs = [
-    { id: 'overview', name: 'Overview', icon: ChartBarIcon },
-    { id: 'postings', name: 'Job Postings', icon: BriefcaseIcon },
-    { id: 'applicants', name: 'Applicants', icon: UserGroupIcon },
-    { id: 'companies', name: 'Companies', icon: BuildingOfficeIcon },
-  ];
+ 
 
   return (
     <div className="flex flex-col space-y-6 bg-gray-900 min-h-screen">
-  
-
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-700">
-        <nav className="flex space-x-8">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`
-                  py-4 px-1 relative group flex items-center space-x-2
-                  ${activeTab === tab.id
-                    ? 'text-blue-400 border-b-2 border-blue-400'
-                    : 'text-gray-400 hover:text-gray-200'
-                  }
-                `}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{tab.name}</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-
-      {activeTab === 'overview' && (
         <>
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -179,43 +146,6 @@ export default function DashboardPage() {
             </div>
           </div>
         </>
-      )}
-
-      {activeTab === 'postings' && (
-        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold text-white">Job Postings</h2>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-              New Posting
-            </button>
-          </div>
-          {/* Add job postings content here */}
-        </div>
-      )}
-
-      {activeTab === 'applicants' && (
-        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold text-white">Applicants</h2>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-              Add Applicant
-            </button>
-          </div>
-          {/* Add applicants content here */}
-        </div>
-      )}
-
-      {activeTab === 'companies' && (
-        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold text-white">Companies</h2>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-              Add Company
-            </button>
-          </div>
-          {/* Add companies content here */}
-        </div>
-      )}
     </div>
   );
 }
