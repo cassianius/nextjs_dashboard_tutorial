@@ -4,7 +4,7 @@ import { lusitana } from '@/app/ui/fonts';
 import { createTopic, updateTopic } from '@/app/actions/topic';
 import { useRouter } from 'next/navigation';
 import { DocumentTextIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
-import { InterviewTopic } from '@prisma/client';
+import { TopicCategory } from '@prisma/client';
 import { Button } from '../button';
 
 function SubmitButton() {
@@ -33,7 +33,7 @@ const initialState = {
 interface TopicFormProps {
   initialData?: {
     id: string;
-    topic: InterviewTopic;
+    topic: TopicCategory;
     goal: string;
     probe_level: number;
   };
@@ -103,7 +103,7 @@ export default function TopicForm({
                     defaultValue={initialData?.topic || ''}
                     required
                   >
-                    {Object.values(InterviewTopic).map((topic) => (
+                    {Object.values(TopicCategory).map((topic) => (
                       <option key={topic} value={topic}>
                         {topic.replace(/_/g, ' ')}
                       </option>

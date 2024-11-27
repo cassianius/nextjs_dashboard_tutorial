@@ -48,7 +48,6 @@ model Account {
   applicants        Applicant[]
   interviews        Interview[]
   Topic             Topic[]
-  TopicGroup        TopicGroup[]
 
   @@map("accounts")
 }
@@ -117,10 +116,10 @@ model Interview {
   interviewer_style     String
   response_depth        String
   bias_migitation_level String
-  topics                String[]          @default([])
   allow_tangents        Boolean           @default(false)
   status                String
   access                InterviewAccess[]
+  topics                Topic[]
 
   @@map("interviews")
 }
@@ -137,7 +136,7 @@ model InterviewAccess {
   @@map("interview_access")
 }
 
-enum InterviewTopic {
+enum TopicCategory {
   TECHNICAL_EXPERTISE
   PROBLEM_SOLVING
   LEADERSHIP
@@ -149,19 +148,11 @@ enum InterviewTopic {
 }
 
 model Topic {
-  id         String         @id @default(cuid())
-  account    Account        @relation(fields: [account_id], references: [id])
-  account_id String
-  topic      InterviewTopic
-  goal       String
-  probe_level      Int
-  TopicGroup TopicGroup[]
-}
-
-model TopicGroup {
-  id         String  @id @default(cuid())
-  account    Account @relation(fields: [account_id], references: [id])
-  account_id String
-  title      String
-  topics     Topic[]
+  id          String         @id @default(cuid())
+  account     Account        @relation(fields: [account_id], references: [id])
+  account_id  String
+  topic       TopicCategory
+  goal        String
+  probe_level Int
+  Interview   Interview[]
 }

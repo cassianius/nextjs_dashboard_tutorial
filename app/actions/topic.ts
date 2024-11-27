@@ -1,7 +1,7 @@
 // app/actions/topic.ts
 'use server';
 
-import { Topic, TopicGroup, Prisma, PrismaClient, InterviewTopic } from '@prisma/client'
+import { Topic, TopicGroup, Prisma, PrismaClient, TopicCategory } from '@prisma/client'
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { auth } from '@/auth';
@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 // Validation schemas
 const TopicSchema = z.object({
-  topic: z.nativeEnum(InterviewTopic),
+  topic: z.nativeEnum(TopicCategory),
   goal: z.string()
     .min(10, 'Goal must be at least 10 characters')
     .max(500, 'Goal must be less than 500 characters'),
@@ -79,7 +79,7 @@ export async function createTopic(prevState: TopicFormState, formData: FormData)
     }
 
     const rawFormData = {
-      topic: formData.get('topic')?.toString() as InterviewTopic,
+      topic: formData.get('topic')?.toString() as TopicCategory,
       goal: formData.get('goal')?.toString() || '',
       probe_level: Number(formData.get('probe_level')) || 1,
     };
@@ -175,7 +175,7 @@ export async function updateTopic(
     }
 
     const rawFormData = {
-      topic: formData.get('topic')?.toString() as InterviewTopic,
+      topic: formData.get('topic')?.toString() as TopicCategory,
       goal: formData.get('goal')?.toString() || '',
       probe_level: Number(formData.get('probe_level')) || 1,
     };
