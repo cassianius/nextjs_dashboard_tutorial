@@ -28,131 +28,107 @@ model User {
   email      String   @unique
   password   String
   role       String
-  account    Account  @relation(fields: [account_id], references: [id])
   account_id String
+  account    Account  @relation(fields: [account_id], references: [id])
 
   @@map("users")
 }
 
 model Account {
-  id                String       @id @default(uuid())
-  created_at        DateTime     @default(now())
-  updated_at        DateTime     @default(now())
-  type              String // e.g., 'personal', 'business', 'enterprise'
-  status            String       @default("active") // e.g., 'active', 'suspended', 'cancelled'
-  subscription_tier String       @default("free") // e.g., 'free', 'pro', 'enterprise'
+  id                String      @id @default(uuid())
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @default(now())
+  type              String
+  status            String      @default("active")
+  subscription_tier String      @default("free")
   metadata          Json?
-  users             User[]
-  companies         Company[]
-  jobs              Job[]
-  applicants        Applicant[]
   interviews        Interview[]
-  Topic             Topic[]
+  sessions          Session[]
+  users             User[]
 
   @@map("accounts")
 }
 
-model Company {
-  id           String      @id @default(uuid())
-  created_at   DateTime    @default(now())
-  updated_at   DateTime    @default(now())
-  account      Account     @relation(fields: [account_id], references: [id])
-  account_id   String
-  name         String
-  headquarters String
-  industry     String
-  size         String
-  website      String
-  interviews   Interview[]
-
-  @@map("companies")
-}
-
-model Job {
-  id         Int         @id @default(autoincrement())
-  created_at DateTime    @default(now())
-  updated_at DateTime    @default(now())
-  account    Account     @relation(fields: [account_id], references: [id])
-  account_id String
-  position   String
-  role       String
-  type       String // full time, contract, etc.
-  metadata   Json? // Changed from string to Json for better structure
-  interviews Interview[]
-
-  @@map("jobs")
-}
-
-model Applicant {
-  id         Int         @id @default(autoincrement())
-  created_at DateTime    @default(now())
-  updated_at DateTime    @default(now())
-  account    Account     @relation(fields: [account_id], references: [id])
-  account_id String
-  first      String
-  last       String
-  email      String      @unique
-  phone      String
-  metadata   Json? // Changed from string to Json for better structure
-  interviews Interview[]
-
-  @@map("applicants")
-}
-
 model Interview {
-  id                    Int               @id @default(autoincrement())
-  created_at            DateTime          @default(now())
-  updated_at            DateTime          @default(now())
-  account               Account           @relation(fields: [account_id], references: [id])
-  account_id            String
-  company               Company           @relation(fields: [company_id], references: [id])
-  company_id            String
-  job                   Job               @relation(fields: [job_id], references: [id])
-  job_id                Int
-  applicant             Applicant         @relation(fields: [applicant_id], references: [id])
-  applicant_id          Int
-  duration              Int // in minutes
-  max_applicants        Int
-  interviewer_style     String
-  response_depth        String
-  bias_migitation_level String
-  allow_tangents        Boolean           @default(false)
-  status                String
-  access                InterviewAccess[]
-  topics                Topic[]
+  id                  Int             @id @default(autoincrement())
+  created_at          DateTime        @default(now())
+  updated_at          DateTime        @default(now())
+  account_id          String
+  company_name        String
+  company_description Json?
+  job_name            String
+  job_description     Json?
+  applicant_name      String
+  applicant_email     String
+  applicant_phone     String
+  applicant_resume    Json?
+  focus_areas         FocusArea[]
+  max_duration        Int
+  interviewer_style   String  //Friendly, Formal, Probing
+  status              String  //Draft, Active, Archived, Deleted
+  account             Account         @relation(fields: [account_id], references: [id])
+  Access              SessionAccess[]
+  Session             Session?
 
   @@map("interviews")
 }
 
-model InterviewAccess {
+model Session {
   id           Int       @id @default(autoincrement())
   created_at   DateTime  @default(now())
+  account_id   String
+  interview_id Int       @unique
+  pin          String
+  start_date   DateTime
+  end_date     DateTime
+  completed    Boolean
   interview    Interview @relation(fields: [interview_id], references: [id])
+  Account      Account[]
+
+  @@map("session")
+}
+
+model SessionAccess {
+  id           Int       @id @default(autoincrement())
+  created_at   DateTime  @default(now())
+  account_id   String
   interview_id Int
   access_code  String    @unique
   pin          String
   expiration   DateTime
+  interview    Interview @relation(fields: [interview_id], references: [id])
 
-  @@map("interview_access")
+  @@map("session_access")
 }
 
-enum TopicCategory {
-  TECHNICAL_EXPERTISE
+enum FocusArea {
+  TECHNICAL_SKILLS
   PROBLEM_SOLVING
-  LEADERSHIP
   COMMUNICATION
-  PROJECT_EXECUTION
-  DOMAIN_KNOWLEDGE
-  ADAPTABILITY
-  INNOVATION
+  ROLE_ALIGNMENT
+  CULTURAL_FIT
+  LEADERSHIP
+  PROJECT_EXPERIENCE
+  SYSTEM_DESIGN
+  CODE_QUALITY
+  BEHAVIORAL
+  TEAM_COLLABORATION
+  INITIATIVE
 }
 
-model Topic {
-  id          String         @id @default(cuid())
-  account     Account        @relation(fields: [account_id], references: [id])
-  account_id  String
-  topic       TopicCategory
-  goal        String
-  probe_level Int
-  Interview   Interview[]
-}
+// Technical qualifications and experience: 
+//      Past roles, technologies used, project responsibilities, and depth of expertise in required skills.
+// Problem-solving approach: 
+//      Ask about challenging situations they've faced and how they worked through them. Look for structured thinking and resourcefulness.
+// Communication skills: 
+//      Assess clarity, listening ability, and professionalism throughout the conversation. Pay attention to how well they explain technical concepts.
+// Role alignment: 
+//      Verify their understanding of the position and why they're interested. Ensure their career goals and expectations match what's offered.
+// Cultural fit and collaboration: 
+//      Explore their preferred work style, experience with teamwork, and how they handle feedback and conflicts.
+// Practical considerations: 
+//      Discuss availability, location/remote preferences, visa status if applicable, and salary expectations.
+// Questions for you: 
+//      Quality of their questions can reveal preparation level and genuine interest in the role.
+// Red flags: 
+//      Note inconsistencies in their story, negative attitudes about previous employers, or lack of preparation.

@@ -22,6 +22,7 @@
     "next-auth": "5.0.0-beta.25",
     "nodemailer": "^6.9.16",
     "postcss": "8.4.31",
+    "psql": "^0.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "recharts": "^2.13.3",
