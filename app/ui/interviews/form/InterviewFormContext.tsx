@@ -2,66 +2,99 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
-// Define the job interface
-interface Job {
-  id: string;
-  company: string;
-  website: string;
-  headquarters: string;
-  size: '1' | '10+' | '100+' | '1000+';
-  jobDescription: string;
+// Define the FocusArea enum to match the schema
+export enum FocusArea {
+  TECHNICAL_SKILLS = 'TECHNICAL_SKILLS',
+  PROBLEM_SOLVING = 'PROBLEM_SOLVING',
+  COMMUNICATION = 'COMMUNICATION',
+  ROLE_ALIGNMENT = 'ROLE_ALIGNMENT',
+  CULTURAL_FIT = 'CULTURAL_FIT',
+  LEADERSHIP = 'LEADERSHIP',
+  PROJECT_EXPERIENCE = 'PROJECT_EXPERIENCE',
+  SYSTEM_DESIGN = 'SYSTEM_DESIGN',
+  CODE_QUALITY = 'CODE_QUALITY',
+  BEHAVIORAL = 'BEHAVIORAL',
+  TEAM_COLLABORATION = 'TEAM_COLLABORATION',
+  INITIATIVE = 'INITIATIVE'
 }
 
-// Define the shape of our form data
+interface PublishResponse {
+  interview: {
+    id: number;
+    company_name: string;
+    job_name: string;
+    applicant_name: string;
+    max_duration: number;
+  };
+  sessionAccess: {
+    access_code: string;
+    pin: string;
+    expiration: string;
+  };
+}
+
+// Define session settings
+interface SessionSettings {
+  expirationDays: number;
+}
+
+// Define the shape of our form data based on the schema
 interface InterviewFormData {
-  selectedJob?: Job;
-  roleCategory: string;
-  interviewDuration: string;
-  interviewStyle: string;
+  // Company Details
+  company_name: string;
+  company_description?: string | Record<string, any>;
   
-  // Applicant
-  applicantEmail: string;
-  resumeFile?: File;
+  // Job Details
+  job_name: string;
+  job_description?: string | Record<string, any>;
   
-  // Questions
-  questions: string[];
+  // Interview Settings
+  interviewer_style: 'Friendly' | 'Formal' | 'Probing';
+  max_duration: number;
+  focus_areas: FocusArea[];
   
-  // Publish
-  expiryDate: string;
-  emailTemplate: string;
+  // Applicant Details
+  applicant_name: string;
+  applicant_email: string;
+  applicant_phone: string;
+  applicant_resume?: string | Record<string, any>;
+  
+  // Status
+  status: 'Draft' | 'Active' | 'Archived' | 'Deleted';
+
+  // Session Settings
+  sessionSettings: SessionSettings;
 }
 
-// Default values
+// Default values aligned with the schema
 const defaultFormData: InterviewFormData = {
-  roleCategory: '',
-  interviewDuration: '30 minutes',
-  interviewStyle: 'Friendly',
-  applicantEmail: '',
-  questions: [''],
-  expiryDate: '',
-  emailTemplate: `Dear [Applicant],
-
-Please complete your phone interview by calling +1 (555) 0123-4567 and entering access code: 1234
-
-The interview will take approximately [duration] minutes. Please complete it by [expiry date].
-
-Best regards,
-[Company Name]`
+  company_name: '',
+  company_description: '',
+  job_name: '',
+  job_description: '',
+  interviewer_style: 'Friendly',
+  max_duration: 30,
+  focus_areas: [],
+  applicant_name: '',
+  applicant_email: '',
+  applicant_phone: '',
+  applicant_resume: '',
+  status: 'Draft',
+  sessionSettings: {
+    expirationDays: 7
+  }
 };
 
 interface InterviewFormContextType {
   formData: InterviewFormData;
   updateFormData: (field: keyof InterviewFormData, value: any) => void;
-  submitForm: () => Promise<void>;
-  jobs: Job[];
-  addJob: (newJob: Omit<Job, 'id'>) => Job;
+  submitForm: () => Promise<PublishResponse>;
 }
 
 const InterviewFormContext = createContext<InterviewFormContextType | undefined>(undefined);
 
 export function InterviewFormProvider({ children }: { children: React.ReactNode }) {
   const [formData, setFormData] = useState<InterviewFormData>(defaultFormData);
-  const [jobs, setJobs] = useState<Job[]>([]);
 
   const updateFormData = (field: keyof InterviewFormData, value: any) => {
     setFormData(prev => ({
@@ -70,21 +103,26 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
     }));
   };
 
-  const addJob = (newJob: Omit<Job, 'id'>) => {
-    const job: Job = {
-      ...newJob,
-      id: crypto.randomUUID()
-    };
-    setJobs(prev => [...prev, job]);
-    return job;
-  };
-
-  const submitForm = async () => {
+  const submitForm = async (): Promise<PublishResponse> => {
     try {
+      // Convert string fields to JSON objects before submitting
+      const processedFormData = {
+        ...formData,
+        company_description: typeof formData.company_description === 'string' 
+          ? { text: formData.company_description }
+          : formData.company_description,
+        job_description: typeof formData.job_description === 'string'
+          ? { text: formData.job_description }
+          : formData.job_description,
+        applicant_resume: typeof formData.applicant_resume === 'string'
+          ? { text: formData.applicant_resume }
+          : formData.applicant_resume
+      };
+
       const response = await fetch('/api/interviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(processedFormData)
       });
       
       if (!response.ok) {
@@ -92,7 +130,7 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
       }
 
       const data = await response.json();
-      return data;
+      return data as PublishResponse;
     } catch (error) {
       console.error('Error submitting form:', error);
       throw error;
@@ -100,7 +138,7 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
   };
 
   return (
-    <InterviewFormContext.Provider value={{ formData, updateFormData, submitForm, jobs, addJob }}>
+    <InterviewFormContext.Provider value={{ formData, updateFormData, submitForm }}>
       {children}
     </InterviewFormContext.Provider>
   );

@@ -2,42 +2,118 @@
 
 import React, { useState } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
+import { AlertCircle } from 'lucide-react';
 import { Button } from '@/app/ui/button';
+import { CompanyDetailsStep } from './CompanyDetailsStep';
 import { JobDetailsStep } from './JobDetailsStep';
 import { ApplicantStep } from './ApplicantStep';
-import { QuestionsStep } from './QuestionsStep';
-import { PreviewStep } from './PreviewStep';
+import { FocusAreasStep } from './FocusAreasStep';
+import { SettingsStep } from './SettingsStep';
 import { PublishStep } from './PublishStep';
-import { InterviewFormProvider } from './InterviewFormContext';
+import { useInterviewForm } from './InterviewFormContext';
 
 const MainWizard = () => {
-    
     const [currentStep, setCurrentStep] = useState(0);
+    const [validationError, setValidationError] = useState<string>('');
+    const { formData } = useInterviewForm();
+
+    const validateCompanyDetails = () => {
+        if (!formData.company_name) {
+            return 'Company name is required';
+        }
+        return null;
+    };
+
+    const validateJobDetails = () => {
+        if (!formData.job_name) {
+            return 'Job title is required';
+        }
+        if (!formData.job_description) {
+            return 'Job description is required';
+        }
+        return null;
+    };
+
+    const validateApplicant = () => {
+        if (!formData.applicant_name) {
+            return 'Applicant name is required';
+        }
+        if (!formData.applicant_email) {
+            return 'Applicant email is required';
+        }
+        if (!formData.applicant_phone) {
+            return 'Applicant phone is required';
+        }
+        if (!formData.applicant_resume) {
+            return 'Applicant resume is required';
+        }
+        return null;
+    };
+
+    const validateFocusAreas = () => {
+        if (!formData.focus_areas || formData.focus_areas.length === 0) {
+            return 'Please select at least one focus area';
+        }
+        if (formData.focus_areas.length > 4) {
+            return 'Maximum of 4 focus areas allowed';
+        }
+        return null;
+    };
+
+    const validateSettings = () => {
+        if (!formData.max_duration) {
+            return 'Interview duration is required';
+        }
+        if (!formData.interviewer_style) {
+            return 'Interviewer style is required';
+        }
+        if (!formData.sessionSettings?.expirationDays) {
+            return 'Expiration period is required';
+        }
+        return null;
+    };
 
     const steps = [
         {
-            title: "Step 1 of 5",
-            component: () => <JobDetailsStep />
+            title: "Step 1 of 6",
+            component: () => <CompanyDetailsStep />,
+            validate: validateCompanyDetails
         },
         {
-            title: "Step 2 of 5",
-            component: () => <ApplicantStep />
+            title: "Step 2 of 6",
+            component: () => <JobDetailsStep />,
+            validate: validateJobDetails
         },
         {
-            title: "Step 3 of 5",
-            component: () => <QuestionsStep />
+            title: "Step 3 of 6",
+            component: () => <ApplicantStep />,
+            validate: validateApplicant
         },
         {
-            title: "Step 4 of 5",
-            component: () => <PreviewStep />
+            title: "Step 4 of 6",
+            component: () => <FocusAreasStep />,
+            validate: validateFocusAreas
         },
         {
-            title: "Step 5 of 5",
-            component: () => <PublishStep />
+            title: "Step 5 of 6",
+            component: () => <SettingsStep />,
+            validate: validateSettings
+        },
+        {
+            title: "Step 6 of 6",
+            component: () => <PublishStep />,
+            validate: () => null  // No validation needed for preview
         }
     ];
 
     const nextStep = () => {
+        const error = steps[currentStep].validate();
+        if (error) {
+            setValidationError(error);
+            return;
+        }
+        
+        setValidationError('');
         if (currentStep < steps.length - 1) {
             setCurrentStep(currentStep + 1);
         }
@@ -45,68 +121,74 @@ const MainWizard = () => {
 
     const prevStep = () => {
         if (currentStep > 0) {
+            setValidationError('');
             setCurrentStep(currentStep - 1);
         }
     };
 
     return (
-        <InterviewFormProvider>
-            <form className="rounded-lg bg-gray-900 p-6">
-                <div className="max-w-[600px] mx-auto">
-                    <div className="mb-8">
-                        <div className="flex gap-1 mb-4 h-1">
-                            {steps.map((_, index) => (
-                                <div
-                                    key={index}
-                                    className={`flex-1 rounded-full transition-colors ${index <= currentStep ? 'bg-blue-600' : 'bg-gray-600'}`}
-                                />
-                            ))}
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-gray-300">
-                                {steps[currentStep].title}
-                            </span>
-                            <div className="flex gap-4">
+        <form className="rounded-lg bg-gray-900 p-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="max-w-[600px] mx-auto">
+                <div className="mb-8">
+                    <div className="flex gap-1 mb-4 h-1">
+                        {steps.map((_, index) => (
+                            <div
+                                key={index}
+                                className={`flex-1 rounded-full transition-colors ${index <= currentStep ? 'bg-blue-600' : 'bg-gray-600'}`}
+                            />
+                        ))}
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-gray-300">
+                            {steps[currentStep].title}
+                        </span>
+                        <div className="flex gap-4">
+                            <Button
+                                type="button"
+                                onClick={() => prevStep()}
+                                disabled={currentStep === 0}
+                                className={currentStep === 0
+                                    ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                    : 'bg-gray-600 hover:bg-gray-500'
+                                }
+                            >
+                                <ArrowLeftIcon className="h-4 w-4 mr-2" />
+                                Previous
+                            </Button>
+
+                            {currentStep < steps.length - 1 ? (
                                 <Button
                                     type="button"
-                                    onClick={() => prevStep()}
-                                    disabled={currentStep === 0}
-                                    className={currentStep === 0
-                                        ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                                        : 'bg-gray-600 hover:bg-gray-500'
-                                    }
+                                    onClick={() => nextStep()}
+                                    className="bg-blue-600 hover:bg-blue-500"
                                 >
-                                    <ArrowLeftIcon className="h-4 w-4 mr-2" />
-                                    Previous
+                                    Next
+                                    <ArrowRightIcon className="h-4 w-4 ml-2" />
                                 </Button>
-
-                                {currentStep < steps.length - 1 ? (
-                                    <Button
-                                        type="button"
-                                        onClick={() => nextStep()}
-                                        className="bg-blue-600 hover:bg-blue-500"
-                                    >
-                                        Next
-                                        <ArrowRightIcon className="h-4 w-4 ml-2" />
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        type="submit"
-                                        className="bg-blue-600 hover:bg-blue-500"
-                                    >
-                                        <RocketLaunchIcon className="h-4 w-4 mr-2" />
-                                        Publish
-                                    </Button>
-                                )}
-                            </div>
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    className="bg-blue-600 hover:bg-blue-500"
+                                >
+                                    <RocketLaunchIcon className="h-4 w-4 mr-2" />
+                                    Publish
+                                </Button>
+                            )}
                         </div>
                     </div>
-                    <div>
-                        {steps[currentStep].component()}
-                    </div>
+                    
+                    {validationError && (
+                        <div className="mt-4 flex items-center gap-2 text-red-400 bg-red-900/20 p-3 rounded-md">
+                            <AlertCircle className="h-4 w-4" />
+                            <span className="text-sm">{validationError}</span>
+                        </div>
+                    )}
                 </div>
-            </form>
-        </InterviewFormProvider>
+                <div>
+                    {steps[currentStep].component()}
+                </div>
+            </div>
+        </form>
     );
 };
 

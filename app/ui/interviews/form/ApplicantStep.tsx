@@ -2,40 +2,78 @@
 
 import React from 'react';
 import { useInterviewForm } from './InterviewFormContext';
-import { PlusCircleIcon } from 'lucide-react';
 
 export const ApplicantStep = () => {
   const { formData, updateFormData } = useInterviewForm();
 
-  return (
-  <div className="max-w-[600px]">
-  <div className="mb-4">
-    <label className="mb-3 mt-5 block text-xs font-medium text-white" htmlFor="applicant_email">
-      Applicant Email
-    </label>
-    <input
-      className="peer block w-full rounded-md text-white border bg-gray-900 py-[9px] text-sm outline-2 placeholder:text-gray-400"
-      id="applicant_email"
-      type="email"
-      name="applicant_email"
-      placeholder="applicant@example.com"
-      required
-    />
-  </div>
+  const handleResumeChange = (text: string) => {
+    updateFormData('applicant_resume', text);
+  };
 
-  <div className="mt-4">
-    <label className="mb-3 mt-5 block text-xs font-medium text-white">
-      Resume
-    </label>
-    <div className="flex items-center justify-center w-full">
-      <label className="flex flex-col items-center justify-center w-full h-32 border border-gray-600 border-dashed rounded-md cursor-pointer hover:bg-gray-800">
-        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          <PlusCircleIcon className="w-8 h-8 mb-2 text-gray-400" />
-          <p className="text-sm text-gray-400">Upload Resume (PDF)</p>
-        </div>
-        <input type="file" className="hidden" accept=".pdf" />
-      </label>
+  return (
+    <div className="space-y-6">
+      <div>
+        <label className="mb-3 block text-xs font-medium text-white">
+          Full Name*
+        </label>
+        <input
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          placeholder="Enter applicant's full name"
+          value={formData.applicant_name}
+          onChange={e => updateFormData('applicant_name', e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <label className="mb-3 block text-xs font-medium text-white">
+          Email Address*
+        </label>
+        <input
+          type="email"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          placeholder="email@example.com"
+          value={formData.applicant_email}
+          onChange={e => updateFormData('applicant_email', e.target.value)}
+          required
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+        />
+      </div>
+
+      <div>
+        <label className="mb-3 block text-xs font-medium text-white">
+          Phone Number*
+        </label>
+        <input
+          type="tel"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          placeholder="+1 (555) 000-0000"
+          value={formData.applicant_phone}
+          onChange={e => updateFormData('applicant_phone', e.target.value)}
+          required
+          pattern="^\+?[1-9]\d{1,14}$"
+        />
+        <p className="mt-1 text-sm text-gray-400">
+          Please include country code (e.g., +1 for US/Canada)
+        </p>
+      </div>
+
+      <div>
+        <label className="mb-3 block text-xs font-medium text-white">
+          Resume*
+        </label>
+        <textarea
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          placeholder="Paste the applicant's resume text here..."
+          rows={10}
+          value={typeof formData.applicant_resume === 'string' ? formData.applicant_resume : ''}
+          onChange={e => handleResumeChange(e.target.value)}
+          required
+        />
+        <p className="mt-2 text-sm text-gray-400">
+          Please paste the full text of the applicant's resume. This will be used to personalize the interview questions.
+        </p>
+      </div>
     </div>
-  </div>
-</div>
-)};
+  );
+};
