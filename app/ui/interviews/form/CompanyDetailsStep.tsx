@@ -13,7 +13,7 @@ export const CompanyDetailsStep = () => {
           Company Name*
         </label>
         <input
-          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
           placeholder="Enter company name"
           value={formData.company_name}
           onChange={e => updateFormData('company_name', e.target.value)}
@@ -27,7 +27,7 @@ export const CompanyDetailsStep = () => {
           <span className="text-gray-400 ml-1">(optional)</span>
         </label>
         <textarea
-          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
           placeholder="Enter a description of your company..."
           rows={6}
           value={typeof formData.company_description === 'string' ? formData.company_description : ''}

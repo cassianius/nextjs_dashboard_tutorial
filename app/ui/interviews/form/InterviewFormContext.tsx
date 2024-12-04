@@ -1,5 +1,6 @@
 'use client';
 
+import { createInterview } from '@/app/actions/interview';
 import React, { createContext, useContext, useState } from 'react';
 
 // Define the FocusArea enum to match the schema
@@ -29,7 +30,7 @@ interface PublishResponse {
   sessionAccess: {
     access_code: string;
     pin: string;
-    expiration: string;
+    expiration: Date;
   };
 }
 
@@ -118,19 +119,9 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
           ? { text: formData.applicant_resume }
           : formData.applicant_resume
       };
-
-      const response = await fetch('/api/interviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(processedFormData)
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to submit interview');
-      }
-
-      const data = await response.json();
-      return data as PublishResponse;
+  
+      const response = await createInterview(processedFormData);
+      return response;
     } catch (error) {
       console.error('Error submitting form:', error);
       throw error;

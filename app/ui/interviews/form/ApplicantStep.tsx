@@ -17,7 +17,7 @@ export const ApplicantStep = () => {
           Full Name*
         </label>
         <input
-          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
           placeholder="Enter applicant's full name"
           value={formData.applicant_name}
           onChange={e => updateFormData('applicant_name', e.target.value)}
@@ -31,7 +31,7 @@ export const ApplicantStep = () => {
         </label>
         <input
           type="email"
-          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
           placeholder="email@example.com"
           value={formData.applicant_email}
           onChange={e => updateFormData('applicant_email', e.target.value)}
@@ -46,7 +46,7 @@ export const ApplicantStep = () => {
         </label>
         <input
           type="tel"
-          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
           placeholder="+1 (555) 000-0000"
           value={formData.applicant_phone}
           onChange={e => updateFormData('applicant_phone', e.target.value)}
@@ -63,7 +63,7 @@ export const ApplicantStep = () => {
           Resume*
         </label>
         <textarea
-          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
           placeholder="Paste the applicant's resume text here..."
           rows={10}
           value={typeof formData.applicant_resume === 'string' ? formData.applicant_resume : ''}

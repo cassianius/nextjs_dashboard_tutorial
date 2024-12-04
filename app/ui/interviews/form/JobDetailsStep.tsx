@@ -13,7 +13,7 @@ export const JobDetailsStep = () => {
           Job Title*
         </label>
         <input
-          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
           placeholder="Enter job title"
           value={formData.job_name}
           onChange={e => updateFormData('job_name', e.target.value)}
@@ -26,20 +26,11 @@ export const JobDetailsStep = () => {
           Job Description*
         </label>
         <textarea
-          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-900 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
+          className="peer block w-full rounded-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm outline-2 placeholder:text-gray-400"
           placeholder="Enter the full job description..."
           rows={8}
-          value={formData.job_description ? JSON.stringify(formData.job_description) : ''}
-          onChange={e => {
-            try {
-              // Store as a JSON object if it's valid JSON, otherwise store as a plain string
-              const parsed = JSON.parse(e.target.value);
-              updateFormData('job_description', parsed);
-            } catch {
-              // If not valid JSON, store as a simple object with a text field
-              updateFormData('job_description', { text: e.target.value });
-            }
-          }}
+          value={typeof formData.job_description === 'string' ? formData.job_description : ''}
+          onChange={e => updateFormData('job_description', e.target.value)}
           required
         />
         <p className="mt-2 text-sm text-gray-400">

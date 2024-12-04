@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Breadcrumbs from '@/app/ui/shared/breadcrumbs';
 import MainWizard from '@/app/ui/interviews/form/MainWizard';
+import { InterviewFormProvider } from '@/app/ui/interviews/form/InterviewFormContext';
 
 const StepWizard = () => {
 
@@ -18,7 +19,9 @@ const StepWizard = () => {
           },
         ]}
       />
-      <MainWizard/>
+      <InterviewFormProvider>
+        <MainWizard />
+      </InterviewFormProvider>
     </main>
   );
 };

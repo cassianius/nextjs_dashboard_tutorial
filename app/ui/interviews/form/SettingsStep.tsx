@@ -45,7 +45,7 @@ export const SettingsStep = () => {
             Interview Duration*
           </label>
           <select
-            className="w-full rounded-md border border-gray-700 bg-gray-900 py-2 px-3 text-sm text-white outline-2 placeholder:text-gray-400"
+            className="w-full rounded-md border border-gray-700 bg-gray-800 py-2 px-3 text-sm text-white outline-2 placeholder:text-gray-400"
             value={formData.max_duration}
             onChange={(e) => updateFormData('max_duration', parseInt(e.target.value))}
             required
@@ -67,7 +67,7 @@ export const SettingsStep = () => {
             Interviewer Style*
           </label>
           <select
-            className="w-full rounded-md border border-gray-700 bg-gray-900 py-2 px-3 text-sm text-white outline-2 placeholder:text-gray-400"
+            className="w-full rounded-md border border-gray-700 bg-gray-800 py-2 px-3 text-sm text-white outline-2 placeholder:text-gray-400"
             value={formData.interviewer_style}
             onChange={(e) => updateFormData('interviewer_style', e.target.value)}
             required
@@ -89,7 +89,7 @@ export const SettingsStep = () => {
             Access Expiration*
           </label>
           <select
-            className="w-full rounded-md border border-gray-700 bg-gray-900 py-2 px-3 text-sm text-white outline-2 placeholder:text-gray-400"
+            className="w-full rounded-md border border-gray-700 bg-gray-800 py-2 px-3 text-sm text-white outline-2 placeholder:text-gray-400"
             value={formData.sessionSettings?.expirationDays}
             onChange={(e) => updateFormData('sessionSettings', {
               ...formData.sessionSettings,
