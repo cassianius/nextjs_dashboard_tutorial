@@ -56,21 +56,32 @@ model Interview {
   account_id          String
   company_name        String
   company_description Json?
-  job_name            String
-  job_description     Json?
-  applicant_name      String
-  applicant_email     String
-  applicant_phone     String
-  applicant_resume    Json?
-  focus_areas         FocusArea[]
-  max_duration        Int
-  interviewer_style   String  //Friendly, Formal, Probing
-  status              String  //Draft, Active, Archived, Deleted
-  account             Account         @relation(fields: [account_id], references: [id])
-  Access              SessionAccess[]
-  Session             Session?
+  job_name           String
+  job_description    Json?
+  focus_areas        FocusArea[]
+  max_duration       Int
+  interviewer_style  String  //Friendly, Formal, Probing
+  status             String  //Draft, Active, Archived, Deleted
+  account            Account         @relation(fields: [account_id], references: [id])
+  applicants         Applicant[]
+  Access             SessionAccess[]
+  Session            Session?
 
   @@map("interviews")
+}
+
+model Applicant {
+  id           Int       @id @default(autoincrement())
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @default(now())
+  name         String
+  email        String
+  phone        String
+  resume       Json?
+  interview_id Int
+  interview    Interview @relation(fields: [interview_id], references: [id])
+
+  @@map("applicants")
 }
 
 model Session {
@@ -115,20 +126,3 @@ enum FocusArea {
   TEAM_COLLABORATION
   INITIATIVE
 }
-
-// Technical qualifications and experience: 
-//      Past roles, technologies used, project responsibilities, and depth of expertise in required skills.
-// Problem-solving approach: 
-//      Ask about challenging situations they've faced and how they worked through them. Look for structured thinking and resourcefulness.
-// Communication skills: 
-//      Assess clarity, listening ability, and professionalism throughout the conversation. Pay attention to how well they explain technical concepts.
-// Role alignment: 
-//      Verify their understanding of the position and why they're interested. Ensure their career goals and expectations match what's offered.
-// Cultural fit and collaboration: 
-//      Explore their preferred work style, experience with teamwork, and how they handle feedback and conflicts.
-// Practical considerations: 
-//      Discuss availability, location/remote preferences, visa status if applicable, and salary expectations.
-// Questions for you: 
-//      Quality of their questions can reveal preparation level and genuine interest in the role.
-// Red flags: 
-//      Note inconsistencies in their story, negative attitudes about previous employers, or lack of preparation.

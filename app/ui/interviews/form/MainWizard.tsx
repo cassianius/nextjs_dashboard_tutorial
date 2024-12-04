@@ -35,17 +35,8 @@ const MainWizard = () => {
     };
 
     const validateApplicant = () => {
-        if (!formData.applicant_name) {
-            return 'Applicant name is required';
-        }
-        if (!formData.applicant_email) {
-            return 'Applicant email is required';
-        }
-        if (!formData.applicant_phone) {
-            return 'Applicant phone is required';
-        }
-        if (!formData.applicant_resume) {
-            return 'Applicant resume is required';
+        if (!formData.applicants || formData.applicants.length === 0) {
+            return 'At least one applicant is required';
         }
         return null;
     };

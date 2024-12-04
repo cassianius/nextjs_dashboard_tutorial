@@ -1,6 +1,7 @@
 'use client';
 
 import { createInterview } from '@/app/actions/interview';
+import { createApplicant } from '@/app/actions/applicant';
 import React, { createContext, useContext, useState } from 'react';
 
 // Define the FocusArea enum to match the schema
@@ -19,12 +20,18 @@ export enum FocusArea {
   INITIATIVE = 'INITIATIVE'
 }
 
+interface Applicant {
+  name: string;
+  email: string;
+  phone: string;
+  resume?: string | Record<string, any>;
+}
+
 interface PublishResponse {
   interview: {
     id: number;
     company_name: string;
     job_name: string;
-    applicant_name: string;
     max_duration: number;
   };
   sessionAccess: {
@@ -55,10 +62,7 @@ interface InterviewFormData {
   focus_areas: FocusArea[];
   
   // Applicant Details
-  applicant_name: string;
-  applicant_email: string;
-  applicant_phone: string;
-  applicant_resume?: string | Record<string, any>;
+  applicants: Applicant[];
   
   // Status
   status: 'Draft' | 'Active' | 'Archived' | 'Deleted';
@@ -76,10 +80,7 @@ const defaultFormData: InterviewFormData = {
   interviewer_style: 'Friendly',
   max_duration: 30,
   focus_areas: [],
-  applicant_name: '',
-  applicant_email: '',
-  applicant_phone: '',
-  applicant_resume: '',
+  applicants: [],
   status: 'Draft',
   sessionSettings: {
     expirationDays: 7
@@ -89,6 +90,8 @@ const defaultFormData: InterviewFormData = {
 interface InterviewFormContextType {
   formData: InterviewFormData;
   updateFormData: (field: keyof InterviewFormData, value: any) => void;
+  addApplicant: (applicant: Applicant) => void;
+  removeApplicant: (index: number) => void;
   submitForm: () => Promise<PublishResponse>;
 }
 
@@ -104,6 +107,20 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
     }));
   };
 
+  const addApplicant = (applicant: Applicant) => {
+    setFormData(prev => ({
+      ...prev,
+      applicants: [...prev.applicants, applicant]
+    }));
+  };
+
+  const removeApplicant = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      applicants: prev.applicants.filter((_, i) => i !== index)
+    }));
+  };
+
   const submitForm = async (): Promise<PublishResponse> => {
     try {
       // Convert string fields to JSON objects before submitting
@@ -114,14 +131,27 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
           : formData.company_description,
         job_description: typeof formData.job_description === 'string'
           ? { text: formData.job_description }
-          : formData.job_description,
-        applicant_resume: typeof formData.applicant_resume === 'string'
-          ? { text: formData.applicant_resume }
-          : formData.applicant_resume
+          : formData.job_description
       };
   
-      const response = await createInterview(processedFormData);
-      return response;
+      // Create the interview first
+      const interviewResponse = await createInterview(processedFormData);
+
+      // Then create all applicants
+      const applicantPromises = formData.applicants.map(applicant => {
+        const processedApplicant = {
+          ...applicant,
+          interview_id: interviewResponse.interview.id,
+          resume: typeof applicant.resume === 'string'
+            ? { text: applicant.resume }
+            : applicant.resume
+        };
+        return createApplicant(processedApplicant);
+      });
+
+      await Promise.all(applicantPromises);
+
+      return interviewResponse;
     } catch (error) {
       console.error('Error submitting form:', error);
       throw error;
@@ -129,7 +159,13 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
   };
 
   return (
-    <InterviewFormContext.Provider value={{ formData, updateFormData, submitForm }}>
+    <InterviewFormContext.Provider value={{ 
+      formData, 
+      updateFormData, 
+      addApplicant, 
+      removeApplicant, 
+      submitForm 
+    }}>
       {children}
     </InterviewFormContext.Provider>
   );

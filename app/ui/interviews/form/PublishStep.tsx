@@ -10,13 +10,12 @@ interface PublishResponse {
     id: number;
     company_name: string;
     job_name: string;
-    applicant_name: string;
     max_duration: number;
   };
   sessionAccess: {
     access_code: string;
     pin: string;
-    expiration: Date;  // Changed from string to Date to match the context
+    expiration: Date;
   };
 }
 
@@ -43,10 +42,11 @@ export const PublishStep = () => {
 
   const getEmailTemplate = () => {
     if (!publishedData) return '';
-    
+
     const expiryDate = format(new Date(publishedData.sessionAccess.expiration), 'MMMM do, yyyy');
-    
-    return `Dear ${formData.applicant_name},
+    const applicantNames = formData.applicants.map(a => a.name).join(', ');
+
+    return `Dear ${applicantNames},
 
 Your phone interview for the ${formData.job_name} position at ${formData.company_name} has been scheduled.
 
@@ -76,48 +76,39 @@ ${formData.company_name}`;
       <div className="p-4 space-y-4">
         <div className="space-y-3">
           <div className="flex items-start gap-3">
-            <Briefcase className="h-5 w-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-gray-300">Company Details</p>
-              <p className="text-white">{formData.company_name}</p>
-              <p className="text-sm text-gray-400">
-                {typeof formData.company_description === 'string' 
-                  ? formData.company_description 
-                  : formData.company_description?.text}
-              </p>
+              <p className="text-sm font-bold mb-1 mt-2 text-gray-300">Company:</p>
+              <p className="text-sm text-white">{formData.company_name}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <User className="h-5 w-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-gray-300">Position</p>
-              <p className="text-white">{formData.job_name}</p>
-              <p className="text-sm text-gray-400">
-                {typeof formData.job_description === 'string' 
-                  ? formData.job_description 
-                  : formData.job_description?.text}
-              </p>
+              <p className="text-sm font-bold mb-1 mt-2 text-gray-300">Position:</p>
+              <p className="text-sm text-white">{formData.job_name}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <UserCircle className="h-5 w-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-gray-300">Applicant</p>
-              <p className="text-white">{formData.applicant_name}</p>
-              <p className="text-sm text-gray-400">{formData.applicant_email}</p>
-              <p className="text-sm text-gray-400">{formData.applicant_phone}</p>
+              <p className="text-sm font-bold mb-1 mt-2 text-gray-300">Applicants:</p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {formData.applicants.map((applicant, index) => (
+                  <div key={index} className="px-2 py-1 bg-gray-700">
+                    <p className="text-sm text-gray-300">{applicant.name}</p>
+                    <p className="text-sm text-gray-300">{applicant.email}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Target className="h-5 w-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-gray-300">Focus Areas</p>
+              <p className="text-sm font-bold mb-1 mt-2 text-gray-300">Focus Areas:</p>
               <div className="flex flex-wrap gap-2 mt-1">
                 {formData.focus_areas.map((area) => (
-                  <span key={area} className="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">
+                  <span key={area} className="px-2 py-1 text-xs bg-gray-700 text-gray-300">
                     {area.replace('_', ' ')}
                   </span>
                 ))}
@@ -126,12 +117,11 @@ ${formData.company_name}`;
           </div>
 
           <div className="flex items-start gap-3">
-            <Clock className="h-5 w-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-gray-300">Settings</p>
-              <p className="text-white">Duration: {formData.max_duration} minutes</p>
-              <p className="text-sm text-gray-400">Style: {formData.interviewer_style}</p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm font-bold mb-1 mt-2 text-gray-300">Settings:</p>
+              <p className="text-sm  text-white">Duration: {formData.max_duration} minutes</p>
+              <p className="text-sm  text-white">Style: {formData.interviewer_style}</p>
+              <p className="text-sm  text-white">
                 Expires after: {formData.sessionSettings.expirationDays} days
               </p>
             </div>
@@ -143,12 +133,12 @@ ${formData.company_name}`;
 
   return (
     <div className="space-y-6">
-    {error && (
-      <div className="bg-red-900/20 border border-red-500 text-red-400 px-4 py-3 rounded-md">
-        {error}
-      </div>
-    )}
-      
+      {error && (
+        <div className="bg-red-900/20 border border-red-500 text-red-400 px-4 py-3 rounded-md">
+          {error}
+        </div>
+      )}
+
       {!publishedData ? (
         <div className="space-y-6">
           <InterviewSummary />
@@ -173,7 +163,7 @@ ${formData.company_name}`;
           <div className="bg-gray-800 p-4 rounded-lg space-y-4 border border-gray-700">
             <div className="space-y-2">
               <p className="text-xs font-medium text-gray-300">
-                Provide these details to the applicant:
+                Provide these details to the applicants:
               </p>
               <div className="space-y-3">
                 <p className="text-xl text-white font-mono">
