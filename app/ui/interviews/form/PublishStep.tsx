@@ -1,9 +1,7 @@
-'use client';
-
 import React, { useState } from 'react';
 import { useInterviewForm } from './InterviewFormContext';
 import { Button } from '@/app/ui/button';
-import { CheckCircle, Copy } from 'lucide-react';
+import { CheckCircle, Copy, Briefcase, User, Target, Clock, UserCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { RocketLaunchIcon } from '@heroicons/react/24/outline';
 
@@ -18,7 +16,7 @@ interface PublishResponse {
   sessionAccess: {
     access_code: string;
     pin: string;
-    expiration: string;
+    expiration: Date;  // Changed from string to Date to match the context
   };
 }
 
@@ -70,24 +68,100 @@ ${formData.company_name}`;
     setTimeout(() => setCopySuccess(false), 2000);
   };
 
+  const InterviewSummary = () => (
+    <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+      <div className="p-4 border-b border-gray-700">
+        <h3 className="text-lg font-medium text-white">Interview Summary</h3>
+      </div>
+      <div className="p-4 space-y-4">
+        <div className="space-y-3">
+          <div className="flex items-start gap-3">
+            <Briefcase className="h-5 w-5 text-gray-400 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-gray-300">Company Details</p>
+              <p className="text-white">{formData.company_name}</p>
+              <p className="text-sm text-gray-400">
+                {typeof formData.company_description === 'string' 
+                  ? formData.company_description 
+                  : formData.company_description?.text}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <User className="h-5 w-5 text-gray-400 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-gray-300">Position</p>
+              <p className="text-white">{formData.job_name}</p>
+              <p className="text-sm text-gray-400">
+                {typeof formData.job_description === 'string' 
+                  ? formData.job_description 
+                  : formData.job_description?.text}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <UserCircle className="h-5 w-5 text-gray-400 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-gray-300">Applicant</p>
+              <p className="text-white">{formData.applicant_name}</p>
+              <p className="text-sm text-gray-400">{formData.applicant_email}</p>
+              <p className="text-sm text-gray-400">{formData.applicant_phone}</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Target className="h-5 w-5 text-gray-400 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-gray-300">Focus Areas</p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {formData.focus_areas.map((area) => (
+                  <span key={area} className="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">
+                    {area.replace('_', ' ')}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Clock className="h-5 w-5 text-gray-400 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-gray-300">Settings</p>
+              <p className="text-white">Duration: {formData.max_duration} minutes</p>
+              <p className="text-sm text-gray-400">Style: {formData.interviewer_style}</p>
+              <p className="text-sm text-gray-400">
+                Expires after: {formData.sessionSettings.expirationDays} days
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
-      {error && (
-        <div className="bg-red-900/20 border border-red-500 text-red-400 px-4 py-3 rounded-md">
-          {error}
-        </div>
-      )}
+    {error && (
+      <div className="bg-red-900/20 border border-red-500 text-red-400 px-4 py-3 rounded-md">
+        {error}
+      </div>
+    )}
       
       {!publishedData ? (
-        <div className="text-center">
-          <Button
-            onClick={handlePublish}
-            disabled={isPublishing}
-            className="bg-blue-600 hover:bg-blue-500 w-full max-w-sm"
-          >
-            <RocketLaunchIcon className="h-4 w-4 mr-2" />
-            {isPublishing ? 'Publishing...' : 'Publish Interview'}
-          </Button>
+        <div className="space-y-6">
+          <InterviewSummary />
+          <div className="flex justify-start">
+            <Button
+              onClick={handlePublish}
+              disabled={isPublishing}
+              className="bg-blue-600 hover:bg-blue-500"
+            >
+              <RocketLaunchIcon className="h-4 w-4 mr-2" />
+              {isPublishing ? 'Publishing...' : 'Publish Interview'}
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="space-y-6">

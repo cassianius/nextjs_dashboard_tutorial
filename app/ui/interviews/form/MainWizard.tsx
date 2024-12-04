@@ -156,7 +156,7 @@ const MainWizard = () => {
                                 Previous
                             </Button>
 
-                            {currentStep < steps.length - 1 ? (
+                            {currentStep < steps.length - 1 && (
                                 <Button
                                     type="button"
                                     onClick={() => nextStep()}
@@ -164,14 +164,6 @@ const MainWizard = () => {
                                 >
                                     Next
                                     <ArrowRightIcon className="h-4 w-4 ml-2" />
-                                </Button>
-                            ) : (
-                                <Button
-                                    type="submit"
-                                    className="bg-blue-600 hover:bg-blue-500"
-                                >
-                                    <RocketLaunchIcon className="h-4 w-4 mr-2" />
-                                    Publish
                                 </Button>
                             )}
                         </div>
