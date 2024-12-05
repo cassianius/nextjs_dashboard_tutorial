@@ -2,6 +2,7 @@
 
 import { createInterview } from '@/app/actions/interview';
 import { createApplicant } from '@/app/actions/applicant';
+import { createSessionAccess } from '@/app/actions/sessionAccess';
 import React, { createContext, useContext, useState } from 'react';
 
 // Define the FocusArea enum to match the schema
@@ -27,18 +28,23 @@ interface Applicant {
   resume?: string | Record<string, any>;
 }
 
+interface SessionAccessInfo {
+  applicant_name: string;
+  applicant_email: string;
+  access_code: string;
+  pin: string;
+  expiration: Date;
+}
+
 interface PublishResponse {
   interview: {
     id: number;
     company_name: string;
     job_name: string;
     max_duration: number;
+    account_id: string;
   };
-  sessionAccess: {
-    access_code: string;
-    pin: string;
-    expiration: Date;
-  };
+  sessionAccess: SessionAccessInfo[];
 }
 
 // Define session settings
@@ -47,7 +53,7 @@ interface SessionSettings {
 }
 
 // Define the shape of our form data based on the schema
-interface InterviewFormData {
+export interface InterviewFormData {
   // Company Details
   company_name: string;
   company_description?: string | Record<string, any>;
@@ -136,9 +142,9 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
   
       // Create the interview first
       const interviewResponse = await createInterview(processedFormData);
-
-      // Then create all applicants
-      const applicantPromises = formData.applicants.map(applicant => {
+  
+      // Then create all applicants and their session access
+      const applicantPromises = formData.applicants.map(async (applicant) => {
         const processedApplicant = {
           ...applicant,
           interview_id: interviewResponse.interview.id,
@@ -146,12 +152,35 @@ export function InterviewFormProvider({ children }: { children: React.ReactNode 
             ? { text: applicant.resume }
             : applicant.resume
         };
-        return createApplicant(processedApplicant);
+        
+        // Create applicant
+        await createApplicant(processedApplicant);
+        
+        // Create session access for this applicant
+        const sessionAccess = await createSessionAccess({
+          interview_id: interviewResponse.interview.id,
+          account_id: interviewResponse.interview.account_id,
+          expiration_days: formData.sessionSettings.expirationDays
+        });
+  
+        // Return combined applicant and session access info
+        return {
+          applicant_name: applicant.name,
+          applicant_email: applicant.email,
+          access_code: sessionAccess.access_code,
+          pin: sessionAccess.pin,
+          expiration: sessionAccess.expiration
+        };
       });
-
-      await Promise.all(applicantPromises);
-
-      return interviewResponse;
+  
+      // Wait for all applicants and session access to be created
+      const sessionAccessResults = await Promise.all(applicantPromises);
+  
+      // Return the properly structured response
+      return {
+        interview: interviewResponse.interview,
+        sessionAccess: sessionAccessResults  // This is now guaranteed to be an array
+      };
     } catch (error) {
       console.error('Error submitting form:', error);
       throw error;
