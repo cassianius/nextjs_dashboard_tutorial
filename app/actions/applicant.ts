@@ -49,3 +49,55 @@ export async function createApplicant(formData: any) {
     throw error;
   }
 }
+
+export interface SearchApplicantResult {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+}
+
+export async function searchApplicants(query: string): Promise<SearchApplicantResult[]> {
+  try {
+    const cookieStore = cookies();
+    const account_id = cookieStore.get('account_id')?.value;
+
+    if (!account_id) {
+      throw new Error('No account ID found');
+    }
+
+    const applicants = await prisma.applicant.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              { name: { contains: query, mode: 'insensitive' } },
+              { email: { contains: query, mode: 'insensitive' } },
+              { phone: { contains: query, mode: 'insensitive' } },
+            ],
+          },
+          {
+            interview: {
+              account_id: account_id
+            }
+          }
+        ]
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+      },
+      orderBy: {
+        name: 'asc'
+      },
+      take: 10 // Limit results for performance
+    });
+
+    return applicants;
+  } catch (error) {
+    console.error('Error searching applicants:', error);
+    throw error;
+  }
+}

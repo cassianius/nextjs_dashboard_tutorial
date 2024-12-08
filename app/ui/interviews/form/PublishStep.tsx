@@ -29,60 +29,47 @@ const InterviewSummary = ({ formData }: { formData: InterviewFormData }) => (
     <div className="p-4 border-b border-gray-700">
       <h3 className="text-lg font-medium text-white">Interview Summary</h3>
     </div>
-    <div className="p-4 space-y-4">
-      <div className="space-y-3">
-        <div className="flex items-start gap-3">
-          <Briefcase className="h-5 w-5 text-gray-400 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-gray-300">Company Details</p>
-            <p className="text-white">{formData.company_name}</p>
+    <div className="p-4 space-y-6">
+      <div className="space-y-6">
+        <div>
+          <p className="text-sm font-bold text-gray-300">Company Details</p>
+          <p className="text-sm text-white mt-1">{formData.company_name}</p>
+        </div>
+
+        <div>
+          <p className="text-sm font-bold text-gray-300">Position</p>
+          <p className="text-sm text-white mt-1">{formData.job_name}</p>
+        </div>
+
+        <div>
+          <p className="text-sm font-bold text-gray-300">Applicants</p>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {formData.applicants.map((applicant, index) => (
+              <div key={index} className="px-3 py-2 bg-gray-700">
+                <p className="text-sm text-gray-300">{applicant.name}</p>
+                <p className="text-xs text-gray-400">{applicant.email}</p>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="flex items-start gap-3">
-          <User className="h-5 w-5 text-gray-400 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-gray-300">Position</p>
-            <p className="text-white">{formData.job_name}</p>
+        <div>
+          <p className="text-sm font-bold text-gray-300">Focus Areas</p>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {formData.focus_areas.map((area) => (
+              <span key={area} className="px-3 py-2 bg-gray-700 text-gray-300 text-xs">
+                {area.replace('_', ' ')}
+              </span>
+            ))}
           </div>
         </div>
 
-        <div className="flex items-start gap-3">
-          <UserCircle className="h-5 w-5 text-gray-400 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-gray-300">Applicants</p>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {formData.applicants.map((applicant, index) => (
-                <div key={index} className="px-2 py-1 rounded-full bg-gray-700">
-                  <p className="text-sm text-gray-300">{applicant.name}</p>
-                  <p className="text-xs text-gray-400">{applicant.email}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <Target className="h-5 w-5 text-gray-400 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-gray-300">Focus Areas</p>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {formData.focus_areas.map((area) => (
-                <span key={area} className="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300">
-                  {area.replace('_', ' ')}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <Clock className="h-5 w-5 text-gray-400 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-gray-300">Settings</p>
-            <p className="text-white">Duration: {formData.max_duration} minutes</p>
-            <p className="text-sm text-gray-400">Style: {formData.interviewer_style}</p>
-            <p className="text-sm text-gray-400">
+        <div>
+          <p className="text-sm font-bold text-gray-300">Settings</p>
+          <div className="mt-1">
+            <p className="text-sm text-white">Duration: {formData.max_duration} minutes</p>
+            <p className="text-sm text-white">Style: {formData.interviewer_style}</p>
+            <p className="text-sm text-white">
               Expires after: {formData.sessionSettings.expirationDays} days
             </p>
           </div>
