@@ -14,7 +14,7 @@ export const RowMenu = ({ status, id }: { status: string; id: number }) => {
     };
 
     return (
-      <div className="relative inline-block text-left">
+      <div className="items-center text-center">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-1 rounded-full hover:bg-gray-700 focus:outline-none"

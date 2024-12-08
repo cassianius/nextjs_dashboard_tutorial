@@ -56,16 +56,16 @@ model Interview {
   account_id          String
   company_name        String
   company_description Json?
-  job_name           String
-  job_description    Json?
-  focus_areas        FocusArea[]
-  max_duration       Int
-  interviewer_style  String  //Friendly, Formal, Probing
-  status             String  //Draft, Active, Archived, Deleted
-  account            Account         @relation(fields: [account_id], references: [id])
-  applicants         Applicant[]
-  Access             SessionAccess[]
-  Session            Session?
+  job_name            String
+  job_description     Json?
+  focus_areas         FocusArea[]
+  max_duration        Int
+  interviewer_style   String //Friendly, Formal, Probing
+  status              String //Draft, Active, Archived, Deleted
+  account             Account         @relation(fields: [account_id], references: [id])
+  applicants          Applicant[]
+  sessionAccesses     SessionAccess[]
+  sessions             Session[]
 
   @@map("interviews")
 }
