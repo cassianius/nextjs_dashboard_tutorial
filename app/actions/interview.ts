@@ -145,3 +145,45 @@ export async function getInterviews(
     throw error;
   }
 }
+
+export interface InterviewDetail {
+  company_name: string;
+  job_name: string;
+  focus_areas: string[];
+  max_duration: number;
+  interviewer_style: string;
+}
+
+export async function fetchInterviewById(id: number): Promise<InterviewDetail> {
+  try {
+    const cookieStore = cookies();
+    const account_id = cookieStore.get('account_id')?.value;
+
+    if (!account_id) {
+      throw new Error('No account ID found. Please log in again.');
+    }
+
+    const interview = await prisma.interview.findFirst({
+      where: {
+        id,
+        account_id,
+      },
+      select: {
+        company_name: true,
+        job_name: true,
+        focus_areas: true,
+        max_duration: true,
+        interviewer_style: true,
+      },
+    });
+
+    if (!interview) {
+      throw new Error('Interview not found');
+    }
+
+    return interview;
+  } catch (error) {
+    console.error('Error fetching interview:', error);
+    throw error;
+  }
+}

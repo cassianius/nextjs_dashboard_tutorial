@@ -21,12 +21,15 @@ export default async function Page({
 
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} text-2xl text-white`}>Interviews</h1>
-      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Search interviews..." />
-        <AddInterview />
-      </div>
 
+
+<div className="flex items-center justify-between">
+          <h2 className={`${lusitana.className} text-2xl text-white`}>Interviews</h2>
+          <div className="flex items-center gap-4">
+            <Search placeholder="Search interviews..." />
+            <AddInterview />
+          </div>
+        </div>
       <div className="relative min-h-[400px]">
         <Suspense fallback={
           <div className="absolute inset-0 flex items-center justify-center">
@@ -36,7 +39,6 @@ export default async function Page({
           <InterviewsTable query={query} currentPage={currentPage} />
         </Suspense>
       </div>
-
       <Suspense>
         <PaginationWrapper query={query} currentPage={currentPage} />
       </Suspense>

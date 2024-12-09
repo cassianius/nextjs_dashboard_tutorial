@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import { AlertCircle } from 'lucide-react';
 import { Button } from '@/app/ui/button';
-import { CompanyDetailsStep } from './CompanyDetailsStep';
-import { JobDetailsStep } from './JobDetailsStep';
-import { ApplicantStep } from './ApplicantStep';
-import { FocusAreasStep } from './FocusAreasStep';
-import { SettingsStep } from './SettingsStep';
-import { PublishStep } from './PublishStep';
-import { useInterviewForm } from './InterviewFormContext';
+import { CompanyDetailsStep } from './company_step';
+import { JobDetailsStep } from './job_step';
+import { ApplicantStep } from './applicant_step';
+import { FocusAreasStep } from './focus_areas_step';
+import { SettingsStep } from './settings_step';
+import { PublishStep } from './publish_step';
+import { useInterviewForm } from './form_context';
 
 const MainWizard = () => {
     const [currentStep, setCurrentStep] = useState(0);

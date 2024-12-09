@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import Breadcrumbs from '@/app/ui/shared/breadcrumbs';
-import MainWizard from '@/app/ui/interviews/form/MainWizard';
-import { InterviewFormProvider } from '@/app/ui/interviews/form/InterviewFormContext';
+import MainWizard from '@/app/ui/interviews/form/wizard';
+import { InterviewFormProvider } from '@/app/ui/interviews/form/form_context';
 
 const StepWizard = () => {
 

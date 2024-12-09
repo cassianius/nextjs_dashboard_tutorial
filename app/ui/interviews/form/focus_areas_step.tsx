@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useInterviewForm } from './InterviewFormContext';
+import { useInterviewForm } from './form_context';
 import { AlertCircle } from 'lucide-react';
-import { FocusArea } from './InterviewFormContext';
+import { FocusArea } from './form_context';
 
 // Define the focus area descriptions
 const FOCUS_AREAS: Record<FocusArea, { title: string; description: string }> = {
