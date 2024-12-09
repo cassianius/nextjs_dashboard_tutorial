@@ -5,6 +5,18 @@ import { cookies } from 'next/headers';
 
 const prisma = new PrismaClient();
 
+export interface ApplicantListItem {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  session_count: number;
+  sessionAccess?: {
+    access_code: string;
+    expiration: Date;
+  };
+}
+
 export async function createApplicant(formData: any) {
   try {
     const cookieStore = cookies();
@@ -154,7 +166,7 @@ export async function fetchApplicantsByInterview(
     // Get total count
     const total = await prisma.applicant.count({ where });
 
-    // Fetch applicants with session counts
+    // Fetch applicants with session counts and session access
     const applicants = await prisma.applicant.findMany({
       where,
       select: {
@@ -168,6 +180,16 @@ export async function fetchApplicantsByInterview(
               where: {
                 completed: true
               }
+            },
+            sessionAccesses: {
+              select: {
+                access_code: true,
+                expiration: true
+              },
+              orderBy: {
+                created_at: 'desc'
+              },
+              take: 1
             }
           }
         }
@@ -184,7 +206,8 @@ export async function fetchApplicantsByInterview(
       name: applicant.name,
       email: applicant.email,
       phone: applicant.phone,
-      session_count: applicant.interview.sessions.length
+      session_count: applicant.interview.sessions.length,
+      sessionAccess: applicant.interview.sessionAccesses[0] || undefined
     }));
 
     return {

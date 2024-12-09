@@ -1,5 +1,7 @@
 import React from 'react';
-import { BuildingOfficeIcon, BriefcaseIcon, DocumentTextIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { BuildingOfficeIcon, BriefcaseIcon, DocumentTextIcon, ClockIcon, LinkIcon } from '@heroicons/react/24/outline';
+import { CopyButton } from '../../shared/copy-button';
+import { headers } from 'next/headers';
 
 const InfoRow = ({ 
   icon, 
@@ -10,14 +12,30 @@ const InfoRow = ({
   label: string;
   content: React.ReactNode;
 }) => (
-  <div className="flex items-start space-x-4 py-4">
-    <div className="text-blue-400">{icon}</div>
+  // Changed from items-start to items-center
+  <div className="flex items-center space-x-4 py-4">
+    <div className="text-blue-400 flex-shrink-0">{icon}</div>
     <div className="flex-1">
       <p className="text-sm text-gray-400">{label}</p>
       <div className="mt-1">{content}</div>
     </div>
   </div>
 );
+
+const RegistrationUrl = () => {
+  // Get host from headers
+  const headersList = headers();
+  const host = headersList.get('host');
+  const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+  const registrationUrl = `${protocol}://${host}/applicant-signup`;
+  
+  return (
+    <div className="flex items-center space-x-2">
+      <p className="text-white font-medium break-all">{registrationUrl}</p>
+      <CopyButton textToCopy={registrationUrl} />
+    </div>
+  );
+};
 
 export const InterviewSummary = ({ interview }: { 
   interview: { 
@@ -43,6 +61,12 @@ export const InterviewSummary = ({ interview }: {
       />
       
       <InfoRow
+        icon={<LinkIcon className="h-6 w-6" />}
+        label="Applicant Registration URL"
+        content={<RegistrationUrl />}
+      />
+
+      <InfoRow
         icon={<DocumentTextIcon className="h-6 w-6" />}
         label="Focus Areas"
         content={
@@ -64,8 +88,7 @@ export const InterviewSummary = ({ interview }: {
         label="Interview Settings"
         content={
           <div className="space-y-1">
-            <p className="text-white">{interview.max_duration} minute interview</p>
-            <p className="text-white">{interview.interviewer_style} style</p>
+            <p className="text-white">{interview.max_duration} minute interview, {interview.interviewer_style.toLocaleLowerCase()} style</p>
           </div>
         }
       />
