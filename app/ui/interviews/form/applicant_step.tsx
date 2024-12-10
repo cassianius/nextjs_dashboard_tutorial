@@ -1,17 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, X, Search, Check, UserPlus, Phone, Mail } from 'lucide-react';
+import { X, Check, UserPlus, Phone, Mail } from 'lucide-react';
 import { useInterviewForm } from './form_context';
-import { useDebouncedCallback } from 'use-debounce';
-import { searchApplicants, SearchApplicantResult } from '@/app/actions/applicant';
-type DbApplicant = SearchApplicantResult;
 
 interface ApplicantFormData {
   name: string;
   email: string;
   phone: string;
-  resume: string; 
+  resume: string;
 }
 
 interface FormErrors {
@@ -24,13 +21,8 @@ interface FormErrors {
 export const ApplicantStep = () => {
   const { formData, addApplicant, removeApplicant } = useInterviewForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchFocused, setSearchFocused] = useState(false);
   const [formSubmitAttempted, setFormSubmitAttempted] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [dbApplicants, setDbApplicants] = useState<DbApplicant[]>([]);
-  const [searchError, setSearchError] = useState<string | null>(null);
 
   const [applicantForm, setApplicantForm] = useState<ApplicantFormData>({
     name: '',
@@ -39,31 +31,23 @@ export const ApplicantStep = () => {
     resume: ''
   });
 
-  const handleSearch = useDebouncedCallback(async (query: string) => {
-    if (!query.trim()) {
-      setDbApplicants([]);
-      return;
-    }
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-digit characters
+    const digits = value.replace(/\D/g, '');
+    
+    // Truncate to 10 digits if longer
+    const truncated = digits.slice(0, 10);
+    
+    // Format as (XXX) XXX-XXXX
+    if (truncated.length === 0) return '';
+    if (truncated.length <= 3) return `(${truncated}`;
+    if (truncated.length <= 6) return `(${truncated.slice(0, 3)}) ${truncated.slice(3)}`;
+    return `(${truncated.slice(0, 3)}) ${truncated.slice(3, 6)}-${truncated.slice(6)}`;
+  };
 
-    setIsLoading(true);
-    setSearchError(null);
-
-    try {
-      const results = await searchApplicants(query);
-      setDbApplicants(results);
-    } catch (error) {
-      console.error('Search error:', error);
-      setSearchError('Failed to search applicants. Please try again.');
-      setDbApplicants([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, 300);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    handleSearch(query);
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setApplicantForm(prev => ({ ...prev, phone: formatted }));
   };
 
   const validateForm = () => {
@@ -79,6 +63,8 @@ export const ApplicantStep = () => {
     }
     if (!applicantForm.phone.trim()) {
       newErrors.phone = 'Phone number is required';
+    } else if (applicantForm.phone.replace(/\D/g, '').length !== 10) {
+      newErrors.phone = 'Please enter a valid 10-digit phone number';
     }
     if (!applicantForm.resume) {
       newErrors.resume = 'Resume is required';
@@ -100,13 +86,6 @@ export const ApplicantStep = () => {
     }
   };
 
-  const handleSelectExisting = (applicant: DbApplicant) => {
-    const { id, ...applicantData } = applicant;
-    addApplicant(applicantData);
-    setSearchQuery('');
-    setDbApplicants([]);
-  };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setFormSubmitAttempted(false);
@@ -114,146 +93,82 @@ export const ApplicantStep = () => {
     setApplicantForm({ name: '', email: '', phone: '', resume: '' });
   };
 
-  const clearSearch = () => {
-    setSearchQuery('');
-    setDbApplicants([]);
-    setSearchError(null);
-  };
+  const addButtonStyles = `
+    w-full rounded-lg border border-dashed border-gray-700 hover:border-blue-500 
+    transition-colors group py-3 flex items-center justify-center gap-2
+    text-gray-400 hover:text-blue-400 text-sm
+  `;
 
   return (
     <div className="space-y-6">
       <div>
-        {/* Search Bar Section */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className={`absolute left-3 top-2.5 h-4 w-4 transition-colors ${searchFocused ? 'text-blue-400' : 'text-gray-400'
-              }`} />
-            <input
-              type="text"
-              placeholder="Search existing applicants..."
-              className="w-full pl-9 rounded-t-md text-white border border-gray-700 bg-gray-800 py-[9px] px-3 text-sm 
-                outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/60
-                placeholder:text-gray-400"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-            />
-            {searchQuery && (
-              <button
-                onClick={clearSearch}
-                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-300"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
+        {/* Title */}
+        <div className="mb-4">
+          <h3 className="text-sm font-medium text-gray-300">Applicants</h3>
+        </div>
 
-            {/* Search Results - Now directly under search bar */}
-            {searchQuery && (
-              <div className="absolute w-full bg-gray-800 border-x border-b border-gray-700 rounded-b-md shadow-lg">
-                {isLoading ? (
-                  <div className="p-4 text-center text-gray-400">
-                    Searching...
-                  </div>
-                ) : searchError ? (
-                  <div className="p-4 text-center text-red-400">
-                    {searchError}
-                  </div>
-                ) : dbApplicants.length > 0 ? (
-                  <div className="max-h-72 overflow-y-auto divide-y divide-gray-700">
-                    {dbApplicants.map((applicant) => (
-                      <button
-                        key={applicant.id}
-                        onClick={() => handleSelectExisting(applicant)}
-                        className="w-full text-left p-3 hover:bg-gray-700/50 flex flex-col gap-1"
-                      >
-                        <span className="text-white font-medium">{applicant.name}</span>
-                        <div className="flex gap-4 text-sm">
-                          <span className="text-gray-400 flex items-center gap-1">
-                            <Mail className="h-3 w-3" />
-                            {applicant.email}
-                          </span>
-                          {applicant.phone && (
-                            <span className="text-gray-400 flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              {applicant.phone}
-                            </span>
-                          )}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-4 text-center text-gray-400">
-                    No matching applicants found
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+        {formData.applicants.length === 0 ? (
+          // Large Add Button with Dashed Border
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-sm"
+            className={addButtonStyles}
           >
             <UserPlus className="h-4 w-4" />
-            Add New
+            Add Your First Applicant
           </button>
-        </div>
-
-        {/* Selected Applicants Title */}
-        <div className="mt-8 mb-4">
-          <h3 className="text-sm font-medium text-gray-300">Selected Applicants</h3>
-        </div>
-
-        {/* Selected Applicants List */}
-        <div className="space-y-2 bg-gray-900/50 rounded-lg p-4 border border-gray-800">
-          {formData.applicants.length === 0 ? (
-            <p className="text-center text-sm text-gray-400 py-4">
-              No applicants selected yet
-            </p>
-          ) : (
-            formData.applicants.map((applicant, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center p-3 rounded-md border border-gray-700 bg-gray-800 hover:border-gray-600 transition-colors"
-              >
-                <div className="flex-1 space-y-1">
-                  <p className="text-white text-sm font-medium">{applicant.name}</p>
-                  <div className="flex gap-4">
-                    <div className="flex items-center gap-1 text-gray-400">
-                      <Mail className="h-3 w-3" />
-                      <span className="text-sm">{applicant.email}</span>
-                    </div>
-                    {applicant.phone && (
+        ) : (
+          // Applicants List with Add Button
+          <div className="space-y-4">
+            <div className="space-y-2 bg-gray-900/50 rounded-lg p-4 border border-gray-800">
+              {formData.applicants.map((applicant, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center p-3 rounded-md border border-gray-700 bg-gray-800 hover:border-gray-600 transition-colors"
+                >
+                  <div className="flex-1 space-y-1">
+                    <p className="text-white text-sm font-medium">{applicant.name}</p>
+                    <div className="flex gap-4">
+                      <div className="flex items-center gap-1 text-gray-400">
+                        <Mail className="h-3 w-3" />
+                        <span className="text-sm">{applicant.email}</span>
+                      </div>
                       <div className="flex items-center gap-1 text-gray-400">
                         <Phone className="h-3 w-3" />
-                        <span className="text-sm">{applicant.phone}</span>
+                        <span className="text-sm">{formatPhoneNumber(applicant.phone)}</span>
                       </div>
-                    )}
+                    </div>
                   </div>
+                  <button
+                    onClick={() => removeApplicant(index)}
+                    className="text-gray-400 hover:text-red-400 p-1"
+                    title="Remove applicant"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => removeApplicant(index)}
-                  className="text-gray-400 hover:text-red-400 p-1"
-                  title="Remove applicant"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            ))
-          )}
-        </div>
+              ))}
+            </div>
+            
+            {/* Add Another Button */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className={addButtonStyles}
+            >
+              <UserPlus className="h-4 w-4" />
+              Add Another Applicant
+            </button>
+          </div>
+        )}
       </div>
 
-
-      {/* Add Applicant Modal - remains unchanged */}
+      {/* Add Applicant Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gray-900 rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-medium text-white">Add New Applicant</h3>
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-300"
               >
                 <X className="h-5 w-5" />
@@ -272,6 +187,9 @@ export const ApplicantStep = () => {
                   onChange={e => setApplicantForm({ ...applicantForm, name: e.target.value })}
                   required
                 />
+                {formSubmitAttempted && errors.name && (
+                  <p className="mt-1 text-xs text-red-400">{errors.name}</p>
+                )}
               </div>
 
               <div>
@@ -286,6 +204,9 @@ export const ApplicantStep = () => {
                   onChange={e => setApplicantForm({ ...applicantForm, email: e.target.value })}
                   required
                 />
+                {formSubmitAttempted && errors.email && (
+                  <p className="mt-1 text-xs text-red-400">{errors.email}</p>
+                )}
               </div>
 
               <div>
@@ -295,11 +216,15 @@ export const ApplicantStep = () => {
                 <input
                   type="tel"
                   className="w-full rounded-md text-white border border-gray-700 bg-gray-800 py-2 px-3 text-sm outline-2 placeholder:text-gray-400"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="(555) 555-5555"
                   value={applicantForm.phone}
-                  onChange={e => setApplicantForm({ ...applicantForm, phone: e.target.value })}
+                  onChange={handlePhoneChange}
+                  maxLength={14}
                   required
                 />
+                {formSubmitAttempted && errors.phone && (
+                  <p className="mt-1 text-xs text-red-400">{errors.phone}</p>
+                )}
               </div>
 
               <div>
@@ -314,11 +239,14 @@ export const ApplicantStep = () => {
                   onChange={e => setApplicantForm({ ...applicantForm, resume: e.target.value })}
                   required
                 />
+                {formSubmitAttempted && errors.resume && (
+                  <p className="mt-1 text-xs text-red-400">{errors.resume}</p>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 mt-6">
                 <button
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={handleCloseModal}
                   className="px-4 py-2 text-sm text-gray-300 hover:text-white"
                 >
                   Cancel

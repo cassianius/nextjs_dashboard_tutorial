@@ -75,7 +75,7 @@ export const InterviewSummary = ({ interview, registrationUrl }: InterviewSummar
             {interview.focus_areas.map((area) => (
               <span 
                 key={area} 
-                className="px-3 py-1 border border-gray-600 text-gray-300 text-xs"
+                className="px-3 py-1 border border-gray-100 text-gray-100 text-xs"
               >
                 {area.replace('_', ' ')}
               </span>
