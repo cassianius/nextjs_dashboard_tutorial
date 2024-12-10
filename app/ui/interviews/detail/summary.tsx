@@ -1,7 +1,7 @@
+// app/ui/interviews/detail/summary.tsx
 import React from 'react';
-import { BuildingOfficeIcon, BriefcaseIcon, DocumentTextIcon, ClockIcon, LinkIcon } from '@heroicons/react/24/outline';
+import { BuildingOfficeIcon, BriefcaseIcon, DocumentTextIcon, ClockIcon, LinkIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { CopyButton } from '../../shared/copy-button';
-import { headers } from 'next/headers';
 
 const InfoRow = ({ 
   icon, 
@@ -12,7 +12,6 @@ const InfoRow = ({
   label: string;
   content: React.ReactNode;
 }) => (
-  // Changed from items-start to items-center
   <div className="flex items-center space-x-4 py-4">
     <div className="text-blue-400 flex-shrink-0">{icon}</div>
     <div className="flex-1">
@@ -22,13 +21,11 @@ const InfoRow = ({
   </div>
 );
 
-const RegistrationUrl = () => {
-  // Get host from headers
-  const headersList = headers();
-  const host = headersList.get('host');
-  const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-  const registrationUrl = `${protocol}://${host}/applicant-signup`;
-  
+interface RegistrationUrlProps {
+  registrationUrl: string;
+}
+
+const RegistrationUrl = ({ registrationUrl }: RegistrationUrlProps) => {
   return (
     <div className="flex items-center space-x-2">
       <p className="text-white font-medium break-all">{registrationUrl}</p>
@@ -37,16 +34,20 @@ const RegistrationUrl = () => {
   );
 };
 
-export const InterviewSummary = ({ interview }: { 
+interface InterviewSummaryProps {
   interview: { 
     company_name: string;
     job_name: string;
     focus_areas: string[];
     max_duration: number;
     interviewer_style: string;
-  } 
-}) => (
-  <div className="bg-gray-800 rounded-xl shadow-lg  px-6">
+    created_at: string;  // Add this line
+  };
+  registrationUrl: string;
+}
+
+export const InterviewSummary = ({ interview, registrationUrl }: InterviewSummaryProps) => (
+  <div className="bg-gray-800 rounded-xl shadow-lg px-6">
     <div className="divide-y divide-gray-700">
       <InfoRow
         icon={<BuildingOfficeIcon className="h-6 w-6" />}
@@ -63,7 +64,7 @@ export const InterviewSummary = ({ interview }: {
       <InfoRow
         icon={<LinkIcon className="h-6 w-6" />}
         label="Applicant Registration URL"
-        content={<RegistrationUrl />}
+        content={<RegistrationUrl registrationUrl={registrationUrl} />}
       />
 
       <InfoRow
@@ -72,12 +73,12 @@ export const InterviewSummary = ({ interview }: {
         content={
           <div className="flex flex-wrap gap-2">
             {interview.focus_areas.map((area) => (
-                 <span 
-                 key={area} 
-                 className="px-3 py-1 border border-gray-600 text-gray-300 text-sm"
-               >
-                 {area.replace('_', ' ')}
-               </span>
+              <span 
+                key={area} 
+                className="px-3 py-1 border border-gray-600 text-gray-300 text-xs"
+              >
+                {area.replace('_', ' ')}
+              </span>
             ))}
           </div>
         }
@@ -88,9 +89,15 @@ export const InterviewSummary = ({ interview }: {
         label="Interview Settings"
         content={
           <div className="space-y-1">
-            <p className="text-white">{interview.max_duration} minute interview, {interview.interviewer_style.toLocaleLowerCase()} style</p>
+            <p className="text-white">{interview.max_duration} minute interview, {interview.interviewer_style.toLowerCase()} style</p>
           </div>
         }
+      />
+
+      <InfoRow
+        icon={<CalendarIcon className="h-6 w-6" />}
+        label="Publish Date"
+        content={<p className="text-white font-medium">{new Date(interview.created_at).toLocaleDateString()}</p>}
       />
     </div>
   </div>

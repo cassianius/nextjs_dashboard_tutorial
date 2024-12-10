@@ -92,10 +92,8 @@ export const PublishStep = () => {
     try {
       const response = await submitForm();
       console.log('Publish response:', response);
-      
-      // Redirect to the interview detail page
-      router.push(`/interviews/${response.interview.id}`);
-    } catch (error) {
+      router.push(`/dashboard/interviews/${response.interview.id}?success=true`);
+        } catch (error) {
       console.error('Error publishing interview:', error);
       setError('Failed to publish interview. Please try again.');
       setIsPublishing(false);

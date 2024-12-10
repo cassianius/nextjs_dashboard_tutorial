@@ -152,6 +152,7 @@ export interface InterviewDetail {
   focus_areas: string[];
   max_duration: number;
   interviewer_style: string;
+  created_at: Date;  // Add this line
 }
 
 export async function fetchInterviewById(id: number): Promise<InterviewDetail> {
@@ -174,6 +175,7 @@ export async function fetchInterviewById(id: number): Promise<InterviewDetail> {
         focus_areas: true,
         max_duration: true,
         interviewer_style: true,
+        created_at: true,  // Add this line
       },
     });
 

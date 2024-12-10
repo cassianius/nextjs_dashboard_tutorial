@@ -10,15 +10,15 @@ export default function AcmeLogo() {
 
         <Image
           src={'/logo_icon.png'}
-          width={44}
-          height={44}
+          width={34}
+          height={34}
           // className="hidden md:block"
           alt="Convocast icon"
         />
 
 
       {/* <GlobeAltIcon className="h-12 w-12 rotate-[15deg]" /> */}
-      <p className="text-[27px] pb-1">convocast</p>
+      <p className="text-[23px] pb-1">convocast</p>
     </div>
   );
 }

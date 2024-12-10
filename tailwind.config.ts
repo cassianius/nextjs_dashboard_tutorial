@@ -35,6 +35,10 @@ const config: Config = {
     },
   },
 
-  plugins: [require('@tailwindcss/forms')],
+  plugins:[
+    require('@tailwindcss/forms'),
+    require('tailwindcss-animate'), // Add this line
+  ]
+  ,
 };
 export default config;

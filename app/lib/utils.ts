@@ -1,4 +1,5 @@
-
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 export const formatCurrency = (amount: number) => {
   return (amount / 100).toLocaleString('en-US', {
     style: 'currency',
@@ -93,3 +94,9 @@ export function capitalize(str: string): string {
   if (!str) return ''; // Handle empty strings
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export default { cn };
